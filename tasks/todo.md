@@ -85,9 +85,9 @@ from GitHub releases. Remove its screenshots, which pointed into `fastlane/`.
 **Estimated scope:** Medium
 
 ### Checkpoint A: after Tasks 1–3
-- [ ] `./scripts/verify.sh` passes
-- [ ] The app installs next to upstream; existing actions work unchanged
-- [ ] Review with the human before starting Profiles
+- [x] `./scripts/verify.sh` passes
+- [x] The app installs next to upstream; existing actions work unchanged
+- [x] Review with the human before starting Profiles
 
 ---
 
