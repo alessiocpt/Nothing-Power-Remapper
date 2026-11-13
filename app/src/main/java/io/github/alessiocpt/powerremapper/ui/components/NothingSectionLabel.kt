@@ -1,0 +1,21 @@
+package io.github.alessiocpt.powerremapper.ui.components
+
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+
+// Small uppercase monospace section header (overline style). The text is force-uppercased so
+// callers can pass ordinary strings and still get the Nothing treatment.
+@Composable
+fun NothingSectionLabel(
+    text: String,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        text = text.uppercase(),
+        modifier = modifier,
+        style = MaterialTheme.typography.labelSmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
+}

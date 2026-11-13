@@ -16,7 +16,7 @@ if (hasReleaseKeystore) {
 }
 
 android {
-    namespace = "dev.koukeneko.essentialkeytools"
+    namespace = "io.github.alessiocpt.powerremapper"
     compileSdk {
         // AndroidX core 1.19.0 and lifecycle 2.11.0 (already pinned in libs.versions.toml)
         // require compiling against API 37; building against 36.1 fails checkDebugAarMetadata.
@@ -25,7 +25,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "dev.koukeneko.essentialkeytools"
+        applicationId = "io.github.alessiocpt.powerremapper"
         minSdk = 35
         targetSdk = 36
         // CI derives these from the release tag and passes them as -PversionCode / -PversionName
