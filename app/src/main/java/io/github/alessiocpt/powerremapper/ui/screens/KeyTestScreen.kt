@@ -15,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -22,13 +23,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.github.alessiocpt.powerremapper.R
 import io.github.alessiocpt.powerremapper.core.KeyGesture
+import io.github.alessiocpt.powerremapper.service.EssentialKeyDetectionService
 import io.github.alessiocpt.powerremapper.service.KeyEventStream
 import io.github.alessiocpt.powerremapper.service.ObservedGesture
 import io.github.alessiocpt.powerremapper.service.ObservedKeyEvent
+import io.github.alessiocpt.powerremapper.ui.AppLabelResolver
 import io.github.alessiocpt.powerremapper.ui.UiLabels
 import io.github.alessiocpt.powerremapper.ui.components.NothingButton
 import io.github.alessiocpt.powerremapper.ui.components.NothingCard
@@ -46,8 +50,9 @@ private val LOG_ROW_GAP = 6.dp
 private const val MAX_LOG_ENTRIES = 20
 
 /**
- * On-device verification harness: shows matching key events and the gestures the classifier emits
- * for the learned Essential Key, plus an entry point into the action picker for each gesture.
+ * On-device verification harness: shows the Foreground App the service is tracking, the matching
+ * key events and the gestures the classifier emits for the learned Essential Key, plus an entry
+ * point into the action picker for each gesture.
  */
 @Composable
 fun KeyTestScreen(
@@ -86,6 +91,8 @@ fun KeyTestScreen(
         )
         Spacer(modifier = Modifier.height(TITLE_TO_CONTENT_GAP))
 
+        ForegroundAppCard()
+        Spacer(modifier = Modifier.height(CARD_GAP))
         GestureMappingCard(onEditGesture = onEditGesture)
         Spacer(modifier = Modifier.height(CARD_GAP))
         GestureLogCard(recentGestures = recentGestures)
@@ -98,6 +105,39 @@ private fun <T> prependCapped(target: MutableList<T>, item: T) {
     target.add(0, item)
     while (target.size > MAX_LOG_ENTRIES) {
         target.removeAt(target.size - 1)
+    }
+}
+
+/**
+ * The app the service currently treats as in front. This screen belongs to this app, which never
+ * counts, so it shows the last app used before opening it.
+ */
+@Composable
+private fun ForegroundAppCard() {
+    val context = LocalContext.current
+    val foregroundApp by EssentialKeyDetectionService.foregroundApp.collectAsState()
+    NothingCard(modifier = Modifier.fillMaxWidth()) {
+        NothingSectionLabel(text = stringResource(R.string.test_section_foreground_app))
+        Spacer(modifier = Modifier.height(LABEL_GAP))
+        val packageName = foregroundApp
+        if (packageName == null) {
+            Text(
+                text = stringResource(R.string.test_foreground_app_none),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        } else {
+            Text(
+                text = AppLabelResolver.labelFor(context, packageName),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            Text(
+                text = packageName,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
     }
 }
 

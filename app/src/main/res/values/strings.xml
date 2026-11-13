@@ -97,6 +97,8 @@
     <string name="test_section_gestures">Gestures</string>
     <string name="test_empty">No events yet — press your Essential Key.</string>
     <string name="test_edit_mapping">Edit action mapping</string>
+    <string name="test_section_foreground_app">Foreground app</string>
+    <string name="test_foreground_app_none">None yet. Open another app, then come back here.</string>
 
     <!-- Gestures -->
     <string name="gesture_single_press">Single press</string>

@@ -2,10 +2,13 @@ package io.github.alessiocpt.powerremapper.service
 
 import android.accessibilityservice.AccessibilityService
 import android.app.KeyguardManager
+import android.content.ComponentName
+import android.content.pm.PackageManager
 import android.os.Handler
 import android.os.Looper
 import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
+import android.view.inputmethod.InputMethodManager
 import io.github.alessiocpt.powerremapper.actions.ActionExecutor
 import io.github.alessiocpt.powerremapper.actions.KeyAction
 import io.github.alessiocpt.powerremapper.actions.KeyHaptics
@@ -20,12 +23,16 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 /**
  * Observes hardware key events, isolates the Essential Key by its learned scanCode, classifies the
- * gesture and runs the mapped action. Consuming the event does NOT stop Nothing OS's own single
+ * gesture and runs the mapped action. It also follows window-state changes, reading only package and
+ * class names, to know the Foreground App. Consuming the event does NOT stop Nothing OS's own single
  * press handling (that needs the separate unlock flow); this service only observes and reacts.
  *
  * While the UI's detection screen is active it instead publishes every key event to
@@ -39,6 +46,12 @@ class EssentialKeyDetectionService : AccessibilityService() {
     private lateinit var actionExecutor: ActionExecutor
     private lateinit var keyHaptics: KeyHaptics
     private lateinit var keyguardManager: KeyguardManager
+    private lateinit var inputMethodManager: InputMethodManager
+    private lateinit var foregroundAppTracker: ForegroundAppTracker
+
+    // Whether "package/class" names an activity. Window-state events repeat the same few classes,
+    // so each lookup is done once per process.
+    private val activityLookups = HashMap<String, Boolean>()
 
     // Rebuilt whenever settings change so the classifier reflects the current active gestures.
     private var classifier: KeyGestureClassifier? = null
@@ -59,6 +72,8 @@ class EssentialKeyDetectionService : AccessibilityService() {
         actionExecutor = ActionExecutor(context = this, accessibilityService = this)
         keyHaptics = KeyHaptics(this)
         keyguardManager = getSystemService(KeyguardManager::class.java)
+        inputMethodManager = getSystemService(InputMethodManager::class.java)
+        foregroundAppTracker = ForegroundAppTracker(ownPackage = packageName)
         collectSettings()
     }
 
@@ -213,7 +228,36 @@ class EssentialKeyDetectionService : AccessibilityService() {
         actionsOnlyWhenUnlocked && keyguardManager.isKeyguardLocked
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
-        // This service filters key events only; window/content events are irrelevant.
+        if (event?.eventType != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) return
+        val windowPackage = event.packageName?.toString() ?: return
+        val changed = foregroundAppTracker.onWindowStateChanged(
+            packageName = windowPackage,
+            isActivity = isActivity(windowPackage, event.className?.toString()),
+            currentImePackage = inputMethodManager.currentInputMethodInfo?.packageName
+        )
+        if (changed) {
+            foregroundAppState.value = foregroundAppTracker.foregroundApp
+        }
+    }
+
+    /**
+     * Whether a window belongs to an activity rather than a dialog, popup or toast. A package this
+     * app cannot see under package-visibility rules counts as not an activity, which keeps the
+     * previous Foreground App; every app a Profile can be made for is visible.
+     */
+    private fun isActivity(windowPackage: String, className: String?): Boolean {
+        if (className.isNullOrEmpty()) return false
+        return activityLookups.getOrPut("$windowPackage/$className") {
+            try {
+                packageManager.getActivityInfo(
+                    ComponentName(windowPackage, className),
+                    PackageManager.ComponentInfoFlags.of(0)
+                )
+                true
+            } catch (error: PackageManager.NameNotFoundException) {
+                false
+            }
+        }
     }
 
     override fun onInterrupt() {
@@ -233,6 +277,7 @@ class EssentialKeyDetectionService : AccessibilityService() {
 
     private fun tearDown() {
         isRunning = false
+        foregroundAppState.value = null
         classifier?.reset()
         suppressNextClassifiedAction = false
         mainHandler.removeCallbacksAndMessages(null)
@@ -247,5 +292,10 @@ class EssentialKeyDetectionService : AccessibilityService() {
         @Volatile
         var isRunning: Boolean = false
             private set
+
+        private val foregroundAppState = MutableStateFlow<String?>(null)
+
+        /** The Foreground App's package, or null until the service has seen one or while it is off. */
+        val foregroundApp: StateFlow<String?> = foregroundAppState.asStateFlow()
     }
 }
