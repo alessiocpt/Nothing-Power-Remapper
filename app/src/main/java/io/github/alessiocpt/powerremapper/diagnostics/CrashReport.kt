@@ -25,7 +25,7 @@ data class CrashReport(
 
 /** Renders [report] as the plain text block the user copies into a bug report. */
 fun formatCrashReport(report: CrashReport): String = buildString {
-    appendLine("Essential Key Tools — crash report")
+    appendLine("Nothing Poweruser Remapper — crash report")
     appendLine()
     appendLine("App:      ${report.appVersionName} (${report.appVersionCode})")
     appendLine("Source:   ${report.installSource}")

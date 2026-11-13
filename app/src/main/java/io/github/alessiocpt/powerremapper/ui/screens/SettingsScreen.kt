@@ -28,7 +28,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -40,13 +39,15 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import io.github.alessiocpt.powerremapper.R
 import io.github.alessiocpt.powerremapper.actions.KeyHaptics
-import io.github.alessiocpt.powerremapper.contributors.Contributor
-import io.github.alessiocpt.powerremapper.contributors.GitHubContributorsService
 import io.github.alessiocpt.powerremapper.settings.HapticPattern
 import io.github.alessiocpt.powerremapper.settings.HapticStrength
 import io.github.alessiocpt.powerremapper.settings.SettingsRepository
 import io.github.alessiocpt.powerremapper.settings.ThemeStyle
 import io.github.alessiocpt.powerremapper.ui.PRIVACY_POLICY_URL
+import io.github.alessiocpt.powerremapper.ui.REPOSITORY_DISPLAY_NAME
+import io.github.alessiocpt.powerremapper.ui.REPOSITORY_URL
+import io.github.alessiocpt.powerremapper.ui.UPSTREAM_ESSENTIAL_KEY_TOOLS_URL
+import io.github.alessiocpt.powerremapper.ui.UPSTREAM_NOTHING_BUTTON_REMAPPER_URL
 import io.github.alessiocpt.powerremapper.ui.components.NothingButton
 import io.github.alessiocpt.powerremapper.ui.components.NothingCard
 import io.github.alessiocpt.powerremapper.ui.components.NothingSectionLabel
@@ -66,16 +67,14 @@ private val LABEL_GAP = 12.dp
 private val ROW_GAP = 4.dp
 private val LINK_ROW_VERTICAL_PADDING = 14.dp
 private val STATUS_TO_ACTION_GAP = 16.dp
-private val CONTRIBUTOR_SECTION_GAP = 20.dp
+private val CREDITS_SECTION_GAP = 20.dp
 private val BUTTON_GAP = 12.dp
 private val RADIO_TO_TEXT_GAP = 12.dp
 
-// The repository is a proper noun, not translatable copy, so it lives in code; only the captions
-// rendered around it come from string resources. The contributor list itself is fetched from the
-// GitHub API at runtime by GitHubContributorsService.
-private const val URL_SCHEME_PREFIX = "https://"
-private const val REPOSITORY_DISPLAY_NAME = "KoukeNeko/EssentialKeyTools"
-private const val REPOSITORY_URL = "https://github.com/KoukeNeko/EssentialKeyTools"
+// Upstream project names are proper nouns, not translatable copy, so they live in code; only the
+// captions rendered around them come from string resources.
+private const val ESSENTIAL_KEY_TOOLS_NAME = "EssentialKeyTools"
+private const val NOTHING_BUTTON_REMAPPER_NAME = "NothingButtonRemapper"
 
 /**
  * The app's preferences: haptic feedback, whether actions run on a locked device, theme and
@@ -490,13 +489,12 @@ private fun updateSourceLabelRes(source: UpdateSource): Int = when (source) {
 }
 
 /**
- * Footer credit: a tappable link to the open-source repository, followed by the contributor list
- * fetched live from the GitHub API. Each row opens the relevant GitHub page in the browser.
+ * Footer credit: a tappable link to this fork's repository and privacy policy, followed by the
+ * upstream projects it is based on. Each row opens the relevant GitHub page in the browser.
  */
 @Composable
 private fun ContributionCard() {
     val context = LocalContext.current
-    val contributorsState = rememberContributorsState()
     NothingCard(modifier = Modifier.fillMaxWidth()) {
         NothingSectionLabel(text = stringResource(R.string.section_contribute))
         Spacer(modifier = Modifier.height(LABEL_GAP))
@@ -510,72 +508,20 @@ private fun ContributionCard() {
             caption = stringResource(R.string.privacy_policy_caption),
             onClick = { openExternalUrl(context, PRIVACY_POLICY_URL) }
         )
-        Spacer(modifier = Modifier.height(CONTRIBUTOR_SECTION_GAP))
-        NothingSectionLabel(text = stringResource(R.string.contribute_contributors))
+        Spacer(modifier = Modifier.height(CREDITS_SECTION_GAP))
+        NothingSectionLabel(text = stringResource(R.string.contribute_based_on))
         Spacer(modifier = Modifier.height(LABEL_GAP))
-        ContributorsSection(
-            state = contributorsState,
-            onOpenProfile = { profileUrl -> openExternalUrl(context, profileUrl) }
+        ContributionLinkRow(
+            title = ESSENTIAL_KEY_TOOLS_NAME,
+            caption = stringResource(R.string.contribute_essential_key_tools_caption),
+            onClick = { openExternalUrl(context, UPSTREAM_ESSENTIAL_KEY_TOOLS_URL) }
+        )
+        ContributionLinkRow(
+            title = NOTHING_BUTTON_REMAPPER_NAME,
+            caption = stringResource(R.string.contribute_nothing_button_remapper_caption),
+            onClick = { openExternalUrl(context, UPSTREAM_NOTHING_BUTTON_REMAPPER_URL) }
         )
     }
-}
-
-/** Snapshot of the asynchronous contributor fetch, driving what the contributors section renders. */
-private sealed interface ContributorsUiState {
-    data object Loading : ContributorsUiState
-    data class Loaded(val contributors: List<Contributor>) : ContributorsUiState
-    data object Error : ContributorsUiState
-}
-
-/** Fetches the contributor list once when the card enters composition, off the main thread. */
-@Composable
-private fun rememberContributorsState(): ContributorsUiState {
-    val service = remember { GitHubContributorsService() }
-    return produceState<ContributorsUiState>(ContributorsUiState.Loading, service) {
-        value = service.fetchContributors().fold(
-            onSuccess = { contributors -> ContributorsUiState.Loaded(contributors) },
-            onFailure = { ContributorsUiState.Error }
-        )
-    }.value
-}
-
-/**
- * Renders the contributor rows once loaded, a muted caption while loading, and the same caption on
- * failure so an offline device still shows a coherent card with the repository link intact.
- */
-@Composable
-private fun ContributorsSection(state: ContributorsUiState, onOpenProfile: (String) -> Unit) {
-    when (state) {
-        ContributorsUiState.Loading ->
-            ContributionCaption(text = stringResource(R.string.contribute_contributors_loading))
-        ContributorsUiState.Error ->
-            ContributionCaption(text = stringResource(R.string.contribute_contributors_error))
-        is ContributorsUiState.Loaded ->
-            if (state.contributors.isEmpty()) {
-                ContributionCaption(text = stringResource(R.string.contribute_contributors_error))
-            } else {
-                Column(verticalArrangement = Arrangement.spacedBy(ROW_GAP)) {
-                    for (contributor in state.contributors) {
-                        ContributionLinkRow(
-                            title = contributor.handle,
-                            caption = contributor.profileUrl.removePrefix(URL_SCHEME_PREFIX),
-                            onClick = { onOpenProfile(contributor.profileUrl) }
-                        )
-                    }
-                }
-            }
-    }
-}
-
-/** A single muted caption line used for the loading and error states of the contributor list. */
-@Composable
-private fun ContributionCaption(text: String) {
-    Text(
-        text = text,
-        style = MaterialTheme.typography.labelSmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        modifier = Modifier.padding(vertical = ROW_GAP)
-    )
 }
 
 /** A single tappable credit row: a primary name over a muted caption, mirroring the gesture rows. */

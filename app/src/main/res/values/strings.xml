@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Nothing Poweruser Remapper</string>
-    <string name="app_title">ESSENTIAL KEY TOOLS</string>
+    <string name="app_title">NOTHING POWERUSER REMAPPER</string>
     <string name="section_service">Service</string>
     <string name="service_not_running">SERVICE — NOT RUNNING</string>
     <string name="service_running">SERVICE — RUNNING</string>
@@ -234,8 +234,8 @@
     <string name="contribute_repository_caption">View source on GitHub</string>
     <string name="privacy_policy_title">Privacy policy</string>
     <string name="privacy_policy_caption">Read how data and accessibility access are handled</string>
-    <string name="contribute_contributors">Contributors</string>
-    <string name="contribute_contributors_loading">Loading contributors…</string>
-    <string name="contribute_contributors_error">Couldn\'t load contributors</string>
+    <string name="contribute_based_on">Based on</string>
+    <string name="contribute_essential_key_tools_caption">by KoukeNeko · the app this fork started from</string>
+    <string name="contribute_nothing_button_remapper_caption">by THE-TECH-CHANGER · per-app profiles and extra actions</string>
     <string name="external_link_open_failed">Could not open the link.</string>
 </resources>

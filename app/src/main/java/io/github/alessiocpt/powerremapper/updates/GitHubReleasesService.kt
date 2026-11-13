@@ -55,7 +55,7 @@ object GitHubReleasesParser {
     private const val STABLE_TAG_PREFIX = "v"
     private const val PREVIEW_TAG_PREFIX = "preview-v"
     private const val TRUSTED_RELEASE_URL_PREFIX =
-        "https://github.com/KoukeNeko/EssentialKeyTools/releases/"
+        "https://github.com/alessiocpt/Nothing-Power-Remapper/releases/"
 }
 
 /** Fetches public release metadata only; it never downloads an APK or executable content. */
@@ -89,8 +89,8 @@ class GitHubReleasesService(private val endpoint: String = DEFAULT_ENDPOINT) {
 
     companion object {
         private const val DEFAULT_ENDPOINT =
-            "https://api.github.com/repos/KoukeNeko/EssentialKeyTools/releases?per_page=30"
-        private const val USER_AGENT = "EssentialKeyTools-App"
+            "https://api.github.com/repos/alessiocpt/Nothing-Power-Remapper/releases?per_page=30"
+        private const val USER_AGENT = "NothingPoweruserRemapper-App"
         private const val ACCEPT_HEADER = "application/vnd.github+json"
         private const val CONNECT_TIMEOUT_MS = 10_000
         private const val READ_TIMEOUT_MS = 10_000

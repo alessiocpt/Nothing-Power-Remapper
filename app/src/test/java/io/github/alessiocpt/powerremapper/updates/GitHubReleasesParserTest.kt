@@ -12,7 +12,7 @@ class GitHubReleasesParserTest {
 
         assertEquals("1.0.8", latest?.versionName)
         assertEquals(
-            "https://github.com/KoukeNeko/EssentialKeyTools/releases/tag/v1.0.8",
+            "https://github.com/alessiocpt/Nothing-Power-Remapper/releases/tag/v1.0.8",
             latest?.pageUrl
         )
     }
@@ -45,25 +45,25 @@ class GitHubReleasesParserTest {
             [
               {
                 "tag_name": "v1.0.7",
-                "html_url": "https://github.com/KoukeNeko/EssentialKeyTools/releases/tag/v1.0.7",
+                "html_url": "https://github.com/alessiocpt/Nothing-Power-Remapper/releases/tag/v1.0.7",
                 "draft": false,
                 "prerelease": false
               },
               {
                 "tag_name": "preview-v1.0.9-pre.37",
-                "html_url": "https://github.com/KoukeNeko/EssentialKeyTools/releases/tag/preview-v1.0.9-pre.37",
+                "html_url": "https://github.com/alessiocpt/Nothing-Power-Remapper/releases/tag/preview-v1.0.9-pre.37",
                 "draft": false,
                 "prerelease": true
               },
               {
                 "tag_name": "v1.0.8",
-                "html_url": "https://github.com/KoukeNeko/EssentialKeyTools/releases/tag/v1.0.8",
+                "html_url": "https://github.com/alessiocpt/Nothing-Power-Remapper/releases/tag/v1.0.8",
                 "draft": false,
                 "prerelease": false
               },
               {
                 "tag_name": "preview-v1.0.9-pre.38",
-                "html_url": "https://github.com/KoukeNeko/EssentialKeyTools/releases/tag/preview-v1.0.9-pre.38",
+                "html_url": "https://github.com/alessiocpt/Nothing-Power-Remapper/releases/tag/preview-v1.0.9-pre.38",
                 "draft": true,
                 "prerelease": true
               },

@@ -6,7 +6,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-private const val ISSUES_URL = "https://github.com/KoukeNeko/EssentialKeyTools/issues"
+private const val ISSUES_URL = "https://github.com/alessiocpt/Nothing-Power-Remapper/issues"
 
 class CrashIssueTest {
 

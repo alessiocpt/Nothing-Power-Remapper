@@ -6,10 +6,19 @@ import android.net.Uri
 import android.widget.Toast
 import io.github.alessiocpt.powerremapper.R
 
-const val PRIVACY_POLICY_URL =
-    "https://github.com/KoukeNeko/EssentialKeyTools/blob/main/PRIVACY.md"
+// The repository is a proper noun, not translatable copy, so it lives in code; every project link
+// derives from it so the fork is repointed in one place.
+const val REPOSITORY_DISPLAY_NAME = "alessiocpt/Nothing-Power-Remapper"
+const val REPOSITORY_URL = "https://github.com/$REPOSITORY_DISPLAY_NAME"
 
-const val ISSUES_URL = "https://github.com/KoukeNeko/EssentialKeyTools/issues"
+const val PRIVACY_POLICY_URL = "$REPOSITORY_URL/blob/main/PRIVACY.md"
+
+const val ISSUES_URL = "$REPOSITORY_URL/issues"
+
+/** The projects this app is forked from, credited in Settings. Both are MIT licensed. */
+const val UPSTREAM_ESSENTIAL_KEY_TOOLS_URL = "https://github.com/KoukeNeko/EssentialKeyTools"
+const val UPSTREAM_NOTHING_BUTTON_REMAPPER_URL =
+    "https://github.com/THE-TECH-CHANGER/NothingButtonRemapper"
 
 private const val PLAY_STORE_PACKAGE = "com.android.vending"
 private const val PRODUCTION_APPLICATION_ID = "io.github.alessiocpt.powerremapper"

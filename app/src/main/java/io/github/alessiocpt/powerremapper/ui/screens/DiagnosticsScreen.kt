@@ -57,7 +57,7 @@ private val BODY_GAP = 16.dp
 private val BUTTON_GAP = 12.dp
 private val EXIT_ROW_GAP = 8.dp
 
-private const val CLIP_LABEL = "Essential Key Tools crash report"
+private const val CLIP_LABEL = "Nothing Poweruser Remapper crash report"
 
 /**
  * Turns "it crashed" into something reportable. The last crash this app caught, plus the exits
