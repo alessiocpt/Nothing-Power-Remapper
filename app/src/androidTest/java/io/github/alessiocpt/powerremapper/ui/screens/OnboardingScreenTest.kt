@@ -41,10 +41,10 @@ class OnboardingScreenTest {
         composeRule.onNodeWithText(resources.getString(R.string.onboarding_language_headline))
             .assertIsDisplayed()
         composeRule.onNodeWithText(
-            resources.getString(R.string.onboarding_language_traditional_chinese)
+            resources.getString(R.string.onboarding_language_english)
         ).performClick()
         composeRule.runOnIdle {
-            assertEquals("zh-TW", selectedLanguage.get())
+            assertEquals("en-US", selectedLanguage.get())
         }
 
         composeRule.onNodeWithText(buttonText(R.string.onboarding_continue)).performClick()

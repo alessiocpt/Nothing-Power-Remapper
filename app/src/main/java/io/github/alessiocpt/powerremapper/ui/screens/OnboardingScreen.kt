@@ -38,7 +38,6 @@ import io.github.alessiocpt.powerremapper.ui.theme.EssentialKeyToolsTheme
 
 private const val DEVICE_LANGUAGE_TAG = ""
 private const val ENGLISH_LANGUAGE_TAG = "en-US"
-private const val TRADITIONAL_CHINESE_LANGUAGE_TAG = "zh-TW"
 
 private val SCREEN_PADDING = 24.dp
 private val TITLE_TO_STEP_GAP = 12.dp
@@ -120,8 +119,6 @@ private fun supportedLanguageTag(languageTags: String): String {
     val primaryLanguageTag = languageTags.substringBefore(',')
     return when {
         primaryLanguageTag.startsWith("en", ignoreCase = true) -> ENGLISH_LANGUAGE_TAG
-        primaryLanguageTag.startsWith("zh", ignoreCase = true) ->
-            TRADITIONAL_CHINESE_LANGUAGE_TAG
         else -> DEVICE_LANGUAGE_TAG
     }
 }
@@ -154,13 +151,6 @@ private fun OnboardingLanguage(
             body = stringResource(R.string.onboarding_language_english_body),
             selected = selectedLanguageTag == ENGLISH_LANGUAGE_TAG,
             onClick = { onLanguageSelected(ENGLISH_LANGUAGE_TAG) }
-        )
-        Spacer(modifier = Modifier.height(LANGUAGE_OPTION_GAP))
-        LanguageOptionCard(
-            title = stringResource(R.string.onboarding_language_traditional_chinese),
-            body = stringResource(R.string.onboarding_language_traditional_chinese_body),
-            selected = selectedLanguageTag == TRADITIONAL_CHINESE_LANGUAGE_TAG,
-            onClick = { onLanguageSelected(TRADITIONAL_CHINESE_LANGUAGE_TAG) }
         )
         Spacer(modifier = Modifier.height(CONTENT_TO_ACTIONS_GAP))
         NothingButton(

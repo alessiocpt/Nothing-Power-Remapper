@@ -1,269 +1,103 @@
-<p align="center">
-  <img src="logo/github_social_preview.png" alt="Essential Key Tools" width="100%">
-</p>
+# Nothing Poweruser Remapper
 
-<h1 align="center">Essential Key Tools</h1>
+A power-user remapper for the Nothing Phone's **Essential Key**. Give single, double, triple and
+long press their own actions, without root.
 
-<p align="center">
-  <strong>Your Essential Key, your shortcuts.</strong><br>
-  Turn single, double, triple, and long presses into the actions you actually use.
-</p>
+This is a personal hard fork of [EssentialKeyTools](https://github.com/KoukeNeko/EssentialKeyTools)
+by KoukeNeko, with ideas from
+[NothingButtonRemapper](https://github.com/THE-TECH-CHANGER/NothingButtonRemapper) by
+THE-TECH-CHANGER. It is distributed on GitHub only. See
+[ADR 0001](docs/adr/0001-hard-fork.md) for why it is a hard fork.
 
-<p align="center">
-  <a href="https://play.google.com/store/apps/details?id=dev.koukeneko.essentialkeytools"><img alt="Get it on Google Play" src="logo/google-play-badge.svg" width="220"></a>
-</p>
+## Status
 
-<p align="center">
-  <a href="https://github.com/KoukeNeko/EssentialKeyTools/releases/latest"><img alt="Release" src="https://img.shields.io/github/v/release/KoukeNeko/EssentialKeyTools?style=for-the-badge&logo=github&label=RELEASE&color=2196F3"></a>
-  <!-- Play publishes only a range, never an exact count, and there is no API for it: this figure is
-       read off the store listing by hand and needs updating when the range changes. -->
-  <a href="https://play.google.com/store/apps/details?id=dev.koukeneko.essentialkeytools"><img alt="Google Play downloads" src="https://img.shields.io/badge/GOOGLE_PLAY-1%2C000%2B_DOWNLOADS-414141?style=for-the-badge&logo=googleplay&logoColor=white"></a>
-  <a href="https://github.com/KoukeNeko/EssentialKeyTools/releases"><img alt="GitHub downloads" src="https://img.shields.io/github/downloads/KoukeNeko/EssentialKeyTools/total?style=for-the-badge&logo=github&label=GITHUB%20DOWNLOADS&color=4CAF50"></a>
-  <img alt="Android 15+" src="https://img.shields.io/badge/ANDROID-15%2B-3DDC84?style=for-the-badge&logo=android&logoColor=white">
-  <a href="https://github.com/KoukeNeko/EssentialKeyTools/stargazers"><img alt="Stars" src="https://img.shields.io/github/stars/KoukeNeko/EssentialKeyTools?style=for-the-badge&logo=github&label=STARS&color=2196F3"></a>
-</p>
+| Area | State |
+|------|-------|
+| Four gestures, haptics, "only when unlocked", Key Test, Diagnostics | Inherited from EssentialKeyTools, working |
+| Optional single-press unlock wizard (manual or Shizuku) | Inherited, working |
+| Per-app **Profiles** with Inherit / Isolated **Fallback** | Planned |
+| Home, Back, Recents, Power menu, Split screen, Adjust Volume | Planned |
+| Toggle Notifications / Toggle Quick Settings | Planned |
+| Launch Assistant, Launch Camera (photo / video / selfie), Camera Shutter | Planned |
 
-<p align="center">
-  <a href="https://github.com/KoukeNeko/EssentialKeyTools/releases/latest">Download the APK</a>
-  · <a href="#getting-started">Getting started</a>
-  · <a href="PRIVACY.md">Privacy</a>
-</p>
+The plan is in [tasks/plan.md](tasks/plan.md), and the vocabulary is in [CONTEXT.md](CONTEXT.md).
 
-Essential Key Tools gives the Nothing Phone's **Essential Key** a life beyond its default action.
-Assign a different shortcut to each gesture and use it instantly, without opening the app first.
+## Actions available today
 
-**Essential Space stays exactly as it is.** Double press, triple press, and long press are yours the
-moment you enable the service — there is nothing to disable and nothing to give up. Only the single
-press, which Nothing OS reserves, needs the optional unlock wizard.
+Launch an app, toggle the flashlight, take a screenshot, lock the screen, play/pause, next or
+previous track, cycle the ringer (ring → vibrate → silent), and toggle the Glyph light on Glyph
+Matrix hardware.
 
-No root access and no computer setup is required. The app explains its accessibility use before
-Android settings open, provides clear agree and decline choices, and never treats leaving the page
-as consent.
+Double, triple and long press work as soon as the accessibility service is on. Nothing OS reserves
+the single press for Essential Space and Recorder. The built-in unlock wizard can disable those
+apps, either through their App Info pages or through [Shizuku](https://shizuku.rikka.app/). They
+stay disabled if you uninstall this app, so re-enable them from the wizard first.
 
-## See it in action
+## Install
 
-<p align="center">
-  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" width="19%" alt="Home screen" />
-  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" width="19%" alt="Action picker" />
-  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.png" width="19%" alt="Unlock wizard" />
-  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/4.png" width="19%" alt="Key setup" />
-  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/5.png" width="19%" alt="Key test" />
-</p>
+Download the signed APK from the
+[latest release](https://github.com/alessiocpt/Nothing-Power-Remapper/releases/latest). It installs
+next to EssentialKeyTools, under its own application ID.
 
-## Make one key do more
+Getting started:
+1. Read the accessibility disclosure, then turn on the service.
+2. Learn your key in **Key setup**.
+3. Map gestures on **Home**.
+4. Check them in **Key test**. Key test shows the recognised gesture without running its action.
 
-### Four gestures, four shortcuts
+Requirements: Android 15 or newer, and a Nothing phone with an Essential Key. The app is English only.
 
-Give single press, double press, triple press, and long press their own actions. Launch an app,
-toggle the flashlight, take a screenshot, lock the screen, play or pause, skip to the next or
-previous track, or cycle the ringer between ring, vibrate, and silent.
+## Privacy
 
-### Three gestures with nothing to disable
+- The app processes hardware-key events on the device. It never stores, uploads or shares them.
+- It saves only the Essential Key identifier, on the device.
+- It does not read screen content, text fields or anything you type.
+- There are no accounts, analytics, ads or tracking.
 
-Double press, triple press, and long press are free for the taking. Essential Space and the Recorder
-keep working exactly as they do now, so there is no trade-off to weigh and no wizard to run — enable
-the accessibility service, pick your shortcuts, done.
-
-### Take back the single press, if you want it
-
-Nothing OS reserves the single press for Essential Space or Recorder, so this one is opt-in. The
-built-in unlock wizard shows the relevant packages and opens each App Info page so you can disable
-or restore them manually. On builds where App Info greys out the Disable button, the wizard can also
-disable and restore them through [Shizuku](https://shizuku.rikka.app/), if you have it running.
-
-> **Before you unlock:** freeing the single press disables Nothing's Essential Space and Recorder
-> entirely. They stay disabled if you uninstall this app. You can enable them again from the wizard
-> or the App Info pages, and an OS update may switch them back on.
-
-### Feel each press
-
-Haptic feedback is off until you turn it on. Choose Light, Medium, or Strong, or design your own
-vibration under **Custom**: how many pulses, how long each lasts, how often they repeat, and how
-strong they are. It vibrates on every press by default, or only when a gesture actually runs its
-action. A phone whose vibration motor can only switch on and off, like the Phone (3), approximates
-strength by pulsing the motor rapidly.
-
-### Ignore presses while locked
-
-Under **Screen lock** in Settings, turn on **Run actions only when unlocked** and the Essential Key
-does nothing while the lock screen is showing, vibration included. It is off by default, so
-shortcuts such as the flashlight or skipping a track keep working with the screen locked or off.
-
-### Pick a look
-
-The app uses the Nothing look by default. Under **Theme** in Settings, Material You takes the colors
-from your wallpaper and follows the system's light or dark setting. Fonts and shapes stay the same.
-
-### Test without surprises
-
-Key Test shows the detected hardware events and recognized gesture without running the shortcut
-assigned to it. You can confirm everything works before relying on a mapping.
-
-### Stay up to date on your terms
-
-Update checks happen only when you press **Check for updates**. Google Play installations stay with
-Google Play, sideloaded stable builds check stable GitHub Releases, and Preview builds check only
-pre-releases. The app never downloads or installs an APK by itself.
-
-
-### Report a crash without guesswork
-
-If something goes wrong, the Diagnostics screen under *Settings* shows the last crash the app caught, along with the
-process exits Android recorded, such as "not responding" or a low-memory shutdown. Copy or share the
-report straight into a GitHub issue.
-
-The report stays on your device. There is no crash-reporting service and nothing is uploaded — the
-app has no server to upload to. It also carries nothing the accessibility service observed: no screen
-content and no record of which keys you pressed. You can read the whole thing before you send it, and
-clear it whenever you like.
-
-## A clear choice before accessibility
-
-The first-run guide starts with language selection and a short introduction. Its final page explains:
-
-- why Essential Key detection needs Android's accessibility service;
-- which hardware-key information the app receives and how it is used;
-- what is stored on the device;
-- when screenshot or lock-screen actions can run; and
-- exactly what happens after either choice.
-
-Two separate actions are always shown:
-
-- **Agree: use accessibility service** opens Android accessibility settings.
-- **Decline: don't use accessibility service** finishes setup without enabling the service.
-
-Pressing Back or leaving the disclosure never enables accessibility. You can review the guide and
-change your choice later from the home screen.
-
-## Privacy by design
-
-- Hardware-key events are processed immediately on the device and are not stored, uploaded, or
-  shared.
-- Only the Essential Key identifier confirmed in Key Setup is saved locally.
-- The app does not read screen content, text fields, or text you type.
-- Screenshot and lock-screen actions run only when you explicitly assign them to a gesture.
-- There are no accounts, analytics, ads, or tracking.
-
-Read the complete [Privacy Policy](PRIVACY.md).
-
-## Getting started
-
-1. **Choose your language** and read the short product introduction.
-2. **Review the accessibility disclosure** and choose whether to use the service.
-3. **Learn your key** in the *Key setup* tab, then press the Essential Key and save it.
-4. **Choose your shortcuts** by tapping each gesture on the *Home* tab.
-5. **Test the gestures** in the *Key test* tab without executing their mapped actions.
-6. **Optionally free single press** with the *Unlock wizard* if you do not use Essential Space or
-   Recorder.
-
-## Compatibility
-
-- Android 15 or newer
-- Nothing phones with an Essential Key
-- English and Traditional Chinese
-
-The app learns the key identifier at runtime instead of assuming every model or firmware reports the
-same value. Availability of the system-app **Disable** button for the optional single-press unlock
-depends on the Nothing OS build.
-
-## Get the app
-
-Install Essential Key Tools from
-[Google Play](https://play.google.com/store/apps/details?id=dev.koukeneko.essentialkeytools) for the
-official release and updates delivered through Google Play.
-
-For manual installation, download the signed APK from the
-[latest GitHub Release](https://github.com/KoukeNeko/EssentialKeyTools/releases/latest). Every stable
-release includes its APK SHA-256 digest plus VirusTotal and Koodous submission status. Preview builds
-use a separate application ID and can be installed beside the stable app.
-
----
+Read the full [Privacy Policy](PRIVACY.md).
 
 ## Technical reference
 
 ### How Essential Key detection works
 
-The Essential Key enters the Android input pipeline as `keyCode=0`; current verified devices report
-Linux `scanCode=250`. Because the public key-layout files leave it unmapped, the accessibility
-service can observe the event while the app filters for the identifier learned in Key Setup. The
-gesture classifier then resolves single, double, triple, or long press and runs the selected action.
-
-Nothing OS also handles the default single press in system policy. Consuming the accessibility key
-event does not stop that system action, which is why the separate manual unlock flow is needed for
-single-press remapping.
+The Essential Key reaches Android's input pipeline as `keyCode=0`, and the devices tested so far
+report Linux `scanCode=250`. The public key-layout files leave it unmapped, so the accessibility
+service can observe it. The service keeps only the identifier learned in Key setup, a classifier
+recognises the gesture, and the mapped action runs. Consuming the event does not stop Nothing OS's
+own single-press handling, which is why single press needs the separate unlock flow.
 
 ### Permissions and network access
 
-- **Accessibility service** - observes hardware-key press and release events, filters them to the
-  learned Essential Key, classifies the gesture, and runs the mapped action. The service does not
-  process window or screen-content events.
-- **`INTERNET`** - fetches the public GitHub contributor list for the contribution card. A separate
-  request runs only after **Check for updates** is pressed and contacts Google Play or GitHub based
-  on the verified installation source.
-- **`VIBRATE`** - plays haptic feedback when you turn it on.
-- **`ACCESS_NOTIFICATION_POLICY`** - Do Not Disturb access, which Android requires before an app can
-  switch the ringer to silent. Only the ringer-cycle action uses it.
-- **`com.nothing.ketchum.permission.ENABLE`** - connects to Nothing's Glyph Matrix service for the
-  Glyph light action.
-- **`moe.shizuku.manager.permission.API_V23`** - optional. Only when Shizuku is running and you grant
-  this app permission in it, the unlock wizard uses it to disable or enable Nothing's Essential
-  packages with `pm disable-user` and `pm enable`. Nothing else is run through Shizuku.
+- **Accessibility service:** observes Essential Key press and release events, recognises the
+  gesture and runs the mapped action.
+- **`INTERNET`:** used only when you press **Check for updates**, to read this repository's
+  GitHub releases.
+- **`VIBRATE`:** haptic feedback, when you turn it on.
+- **`ACCESS_NOTIFICATION_POLICY`:** lets the ringer-cycle action switch to silent.
+- **`com.nothing.ketchum.permission.ENABLE`:** the Glyph light action.
+- **`moe.shizuku.manager.permission.API_V23`:** optional. Lets the unlock wizard run `pm disable-user` /
+  `pm enable` on Nothing's Essential packages.
 
 ### Development
 
-Install Android Studio with the Android SDK and JDK 21. Android Studio's bundled JBR works.
-
-macOS / Linux:
-
-```bash
-./gradlew lint test assembleDebug
-```
-
-Windows PowerShell:
-
-```powershell
-.\gradlew.bat lint test assembleDebug
-```
-
-On macOS and Linux, the verification harness runs the same quality gate and prints a single
-PASS/FAIL summary. It uses `JAVA_HOME` when set, otherwise it detects Android Studio's macOS JBR or
-the Java installation on `PATH`:
+You need JDK 21 and the Android SDK (platform 37). Point `local.properties` at the SDK, then run the
+quality gate (lint, unit tests and a debug build):
 
 ```bash
 ./scripts/verify.sh
 ```
 
-`scripts/simulate-key.sh` is a best-effort development helper that injects a scancode-250 event with
-`adb sendevent`. It needs the correct input node and usually root on stock firmware; the app itself
-does not require root, ADB, or this development setup. Shizuku is optional and only used by the
-unlock wizard.
+`scripts/simulate-key.sh` is a best-effort helper that injects a scancode-250 event with
+`adb sendevent`. It usually needs root on stock firmware.
 
-Pure logic such as gesture classification, settings serialization, unlock-status mapping, and
-update-version parsing is covered by JVM unit tests without requiring a device.
+### Third-party software
 
-<p>
-  <a href="https://github.com/KoukeNeko/EssentialKeyTools/actions/workflows/build-apk.yml"><img alt="Build" src="https://img.shields.io/github/actions/workflow/status/KoukeNeko/EssentialKeyTools/build-apk.yml?branch=main&style=for-the-badge&logo=githubactions&logoColor=white&label=BUILD"></a>
-  <img alt="Kotlin" src="https://img.shields.io/badge/KOTLIN-2.2.10-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white">
-  <img alt="Jetpack Compose" src="https://img.shields.io/badge/COMPOSE-4285F4?style=for-the-badge&logo=jetpackcompose&logoColor=white">
-  <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/LICENSE-MIT-4CAF50?style=for-the-badge&logo=github"></a>
-</p>
-
-## Third-party software
-
-The Glyph light action on Nothing Phone (3) is built on Nothing's official
+The Glyph light action uses Nothing's official
 [Glyph Matrix SDK](https://github.com/Nothing-Developer-Programme/GlyphMatrix-Developer-Kit),
-vendored as `app/libs/glyph-matrix-sdk-2.0.aar` under its own closed-source license (see
-[`app/libs/GLYPH_MATRIX_SDK_LICENSE.md`](app/libs/GLYPH_MATRIX_SDK_LICENSE.md)), separate from this
-project's MIT license below.
-
-## Support
-
-If Essential Key Tools is useful to you, you can support development:
-
-<a href="https://buymeacoffee.com/doershing"><img alt="Buy Me a Coffee" src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-doershing-FFDD00?style=for-the-badge&logo=buymeacoffee&logoColor=black"></a>
+vendored as `app/libs/glyph-matrix-sdk-2.0.aar` under its own license (see
+[`app/libs/GLYPH_MATRIX_SDK_LICENSE.md`](app/libs/GLYPH_MATRIX_SDK_LICENSE.md)).
 
 ## License
 
-[MIT](LICENSE) © KoukeNeko
-
-Google Play and the Google Play logo are trademarks of Google LLC.
+[MIT](LICENSE). Copyright alessiocpt, KoukeNeko (EssentialKeyTools) and THE-TECH-CHANGER
+(NothingButtonRemapper).

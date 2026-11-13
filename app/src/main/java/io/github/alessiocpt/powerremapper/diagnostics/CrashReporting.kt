@@ -57,15 +57,12 @@ private fun readBuildSnapshot(context: Context): BuildSnapshot {
     val packageInfo = runCatching {
         context.packageManager.getPackageInfo(context.packageName, 0)
     }.getOrNull()
-    val installingPackageName = runCatching {
-        context.packageManager.getInstallSourceInfo(context.packageName).installingPackageName
-    }.getOrNull()
 
     return BuildSnapshot(
         appVersionName = packageInfo?.versionName ?: UNKNOWN_VERSION_NAME,
         appVersionCode = packageInfo?.longVersionCode ?: 0L,
         // Reuses the update checker's mapping so "where did this build come from" has one answer.
-        installSource = chooseUpdateSource(context.packageName, installingPackageName)
+        installSource = chooseUpdateSource(context.packageName)
             .name
             .lowercase()
     )

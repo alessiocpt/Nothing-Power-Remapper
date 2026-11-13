@@ -1,7 +1,7 @@
 name: Release
 
-# On a version tag (e.g. v1.1) build a signed release APK + AAB and publish them to a GitHub release.
-# The AAB is the Google Play upload bundle; the APK is for sideloading / F-Droid / IzzyOnDroid.
+# On a version tag (e.g. v1.1) build a signed release APK and publish it to a GitHub release, the
+# app's only distribution channel.
 # Can also be run manually (workflow_dispatch) against an existing tag to rebuild/replace its assets.
 # The signing keystore and passwords come from repository secrets, so the private key never lives in
 # the repository: RELEASE_KEYSTORE_BASE64 / RELEASE_STORE_PASSWORD / RELEASE_KEY_PASSWORD / RELEASE_KEY_ALIAS.
@@ -82,11 +82,11 @@ jobs:
             echo "keyPassword=$KEY_PASSWORD"
           } > app/keystore.properties
 
-      - name: Build the signed release APK and AAB
+      - name: Build the signed release APK
         env:
           VERSION_NAME: ${{ steps.resolve.outputs.version_name }}
           VERSION_CODE: ${{ steps.resolve.outputs.version_code }}
-        run: ./gradlew assembleRelease bundleRelease -PversionName="$VERSION_NAME" -PversionCode="$VERSION_CODE" --stacktrace
+        run: ./gradlew assembleRelease -PversionName="$VERSION_NAME" -PversionCode="$VERSION_CODE" --stacktrace
 
       - name: Remove signing material from the workspace
         if: always()
@@ -113,19 +113,16 @@ jobs:
           KOODOUS_STATUS: ${{ steps.security_scan.outputs.koodous_status }}
           KOODOUS_REPORT_URL: ${{ steps.security_scan.outputs.koodous_report_url }}
         run: |
-          APK="EssentialKeyTools-${TAG}.apk"
-          AAB="EssentialKeyTools-${TAG}.aab"
+          APK="NothingPoweruserRemapper-${TAG}.apk"
           cp app/build/outputs/apk/release/app-release.apk "$APK"
-          cp app/build/outputs/bundle/release/app-release.aab "$AAB"
-          # Prefer version-specific detailed notes for GitHub. Play's short "what's new" text has a
-          # different audience and length limit, so it is only the fallback for older releases.
+          # Prefer version-specific notes from distribution/release-notes/<tag>.md.
           # --generate-notes is not used: with direct-to-main commits and no PRs it produces nothing.
           NOTES="$(mktemp)"
           RELEASE_NOTES="distribution/release-notes/${TAG}.md"
           if [ -f "$RELEASE_NOTES" ]; then
             cat "$RELEASE_NOTES" > "$NOTES"
           else
-            cat distribution/whatsnew/whatsnew-en-US > "$NOTES"
+            printf 'Nothing Poweruser Remapper %s\n' "$TAG" > "$NOTES"
           fi
           {
             printf '\n## Security analysis\n\n'
@@ -147,79 +144,10 @@ jobs:
           } >> "$NOTES"
           printf '\n**Full changelog:** %s/%s/commits/%s\n' "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$TAG" >> "$NOTES"
           if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            gh release upload "$TAG" "$APK" "$AAB" --repo "$GITHUB_REPOSITORY" --clobber
+            gh release upload "$TAG" "$APK" --repo "$GITHUB_REPOSITORY" --clobber
             gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" \
-              --title "Essential Key Tools ${TAG}" --notes-file "$NOTES"
+              --title "Nothing Poweruser Remapper ${TAG}" --notes-file "$NOTES"
           else
-            gh release create "$TAG" "$APK" "$AAB" --repo "$GITHUB_REPOSITORY" \
-              --title "Essential Key Tools ${TAG}" --notes-file "$NOTES"
+            gh release create "$TAG" "$APK" --repo "$GITHUB_REPOSITORY" \
+              --title "Nothing Poweruser Remapper ${TAG}" --notes-file "$NOTES"
           fi
-
-      # Continuous deployment to Google Play. Runs only when the Play service-account secret is set,
-      # so tagging still works before CD is configured. Uploads to the PRODUCTION track as a DRAFT.
-      # Play now sends this app's edits for review automatically and rejects the request outright if
-      # changesNotSentForReview is set, so the parameter is gone. The release is still uploaded as a
-      # draft, which does not roll out on its own: completing it stays a Play Console action. The
-      # Play "what's new" text comes from distribution/whatsnew/whatsnew-<lang>.
-      - name: Check for Play credentials
-        id: play
-        env:
-          PLAY_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
-        run: |
-          if [ -n "$PLAY_JSON" ]; then
-            echo "ready=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "ready=false" >> "$GITHUB_OUTPUT"
-            echo "PLAY_SERVICE_ACCOUNT_JSON not set — skipping Play upload."
-          fi
-
-      # Create the version-specific production draft before Supply selects it for listing updates.
-      - name: Upload the AAB to Google Play (production track)
-        if: steps.play.outputs.ready == 'true'
-        uses: r0adkll/upload-google-play@v1
-        with:
-          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
-          packageName: dev.koukeneko.essentialkeytools
-          releaseFiles: app/build/outputs/bundle/release/app-release.aab
-          tracks: production
-          status: draft
-          whatsNewDirectory: distribution/whatsnew
-
-      # upload-google-play publishes the binary and per-version notes, but not the store listing.
-      # Supply then syncs the reviewed description and screenshots without requesting review.
-      - name: Set up Ruby for Play metadata
-        if: steps.play.outputs.ready == 'true'
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.3'
-
-      # Manual reruns use the latest reviewed listing assets while rebuilding the immutable tag.
-      - name: Check out current Play metadata for a manual rerun
-        if: steps.play.outputs.ready == 'true' && github.event_name == 'workflow_dispatch'
-        uses: actions/checkout@v7
-        with:
-          ref: ${{ github.event.repository.default_branch }}
-          sparse-checkout: fastlane/metadata/android
-          path: current-play-metadata
-
-      - name: Upload Play store listing metadata
-        if: steps.play.outputs.ready == 'true'
-        env:
-          PLAY_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
-          PLAY_METADATA_PATH: ${{ github.event_name == 'workflow_dispatch' && 'current-play-metadata/fastlane/metadata/android' || 'fastlane/metadata/android' }}
-          VERSION_CODE: ${{ steps.resolve.outputs.version_code }}
-        run: |
-          JSON_KEY="$RUNNER_TEMP/play-service-account.json"
-          trap 'rm -f "$JSON_KEY"' EXIT
-          printf '%s' "$PLAY_JSON" > "$JSON_KEY"
-          gem install fastlane -v 2.237.0 --no-document
-          fastlane supply \
-            --json_key "$JSON_KEY" \
-            --package_name dev.koukeneko.essentialkeytools \
-            --version_code "$VERSION_CODE" \
-            --metadata_path "$PLAY_METADATA_PATH" \
-            --skip_upload_apk \
-            --skip_upload_aab \
-            --skip_upload_changelogs \
-            --skip_upload_images \
-            --changes_not_sent_for_review

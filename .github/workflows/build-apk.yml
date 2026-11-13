@@ -15,7 +15,7 @@ permissions:
 env:
   PRE_VERSION_NAME: 1.0.19-pre.${{ github.run_number }}
   PRE_TAG: preview-v1.0.19-pre.${{ github.run_number }}
-  PRE_ARTIFACT_NAME: essential-key-tools-v1.0.19-pre.${{ github.run_number }}
+  PRE_ARTIFACT_NAME: nothing-poweruser-remapper-v1.0.19-pre.${{ github.run_number }}
 
 concurrency:
   group: build-apk-${{ github.ref }}
@@ -124,7 +124,7 @@ jobs:
         id: package
         run: |
           SOURCE_APK="preview-artifact/app-debug.apk"
-          RELEASE_APK="EssentialKeyTools-v${PRE_VERSION_NAME}.apk"
+          RELEASE_APK="NothingPoweruserRemapper-v${PRE_VERSION_NAME}.apk"
           if [ ! -f "$SOURCE_APK" ]; then
             echo "Missing workflow artifact: $SOURCE_APK" >&2
             exit 1
@@ -168,7 +168,7 @@ jobs:
 
           NOTES="$(mktemp)"
           cp "$RELEASE_NOTES" "$NOTES"
-          RELEASE_TITLE="Essential Key Tools ${PRE_VERSION_NAME/-pre./ pre.}"
+          RELEASE_TITLE="Nothing Poweruser Remapper ${PRE_VERSION_NAME/-pre./ pre.}"
           {
             printf '\n## Security analysis\n\n'
             printf 'Preview APK SHA-256: `%s`\n\n' "$APK_SHA256"

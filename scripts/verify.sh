@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# verify.sh — the build safety net for EssentialKeyTools.
+# verify.sh — the build safety net for Nothing Poweruser Remapper.
 #
 # Runs the full quality gate (lint, unit tests, debug assembly) and prints a single PASS/FAIL
 # summary. Exits non-zero on the first failure so it can gate a commit or CI step.

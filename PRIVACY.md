@@ -1,14 +1,13 @@
-# Privacy Policy — Essential Key Tools
+# Privacy Policy — Nothing Poweruser Remapper
 
-_Last updated: 7 October 2026_
+_Last updated: 13 November 2026_
 
-Essential Key Tools ("the app") is a free, open-source Android app that remaps the Nothing Phone
+Nothing Poweruser Remapper ("the app") is a free, open-source Android app that remaps the Nothing Phone
 Essential Key. This policy explains what the app does — and does not do — with your data.
 
 **In short: the developer does not collect, store, or sell personal information. The app has no
-user accounts, analytics, advertising, or tracking. Its only automatic network request is the
-public GitHub contributor-list request described below. A separate update check runs only when you
-press its button.**
+user accounts, analytics, advertising, or tracking. It makes no automatic network requests; the
+only one is an update check that runs when you press its button.**
 
 ## Data the app collects
 
@@ -81,28 +80,18 @@ Settings.
 
 ## Network access (INTERNET permission)
 
-The Settings screen automatically fetches the public list of the project's contributors from the
-GitHub API (`https://api.github.com/repos/KoukeNeko/EssentialKeyTools/contributors`) to display their
-names.
-This request sends no personal information. As with any web request, GitHub may process your device's
-IP address under its own privacy policy. This feature is cosmetic — the app's core features work
-fully offline, and the app still functions if the request fails.
+The app has a manual **Check for updates** button. It does not check until you press it:
 
-The app also has a manual **Check for updates** button. It does not check until you press it:
-
-- a copy installed by Google Play asks Google Play whether an update is available and opens the
-  app's Play listing if you choose to continue;
-- a sideloaded stable copy requests the public stable-release list from the GitHub API; and
+- a stable copy requests the public stable-release list from the GitHub API; and
 - a Preview copy requests the public pre-release list from the GitHub API.
 
-GitHub receives ordinary connection metadata such as your IP address. Google Play processes update
-requests under Google's privacy policy. The app compares GitHub version numbers on your device and
+GitHub receives ordinary connection metadata such as your IP address. The app compares GitHub version numbers on your device and
 does not include your settings, mappings, scan code, or hardware key events in an update request. It
 never downloads or installs an APK itself.
 
 ## Permissions used
 
-- **INTERNET** — to fetch the contributor list and, only when requested, GitHub release metadata.
+- **INTERNET** — only when you press **Check for updates**, to fetch GitHub release metadata.
 - **Accessibility Service** (`BIND_ACCESSIBILITY_SERVICE`) — to detect your Essential Key press.
 - **Vibration** (`VIBRATE`) — to vibrate when you press the Essential Key or an assigned action runs,
   if you turn haptic feedback on.
@@ -120,9 +109,8 @@ never downloads or installs an APK itself.
 ## Data sharing
 
 The app does not share settings or hardware key-event data with third parties and has no backend
-server of its own. Its only automatic third-party connection is the GitHub contributor-list request
-described above. A manual update check contacts Google Play or GitHub according to the app's install
-source. These requests contain no settings or hardware key-event data, although the service provider
+server of its own. It makes no automatic third-party connections. A manual update check contacts
+GitHub. That request contains no settings or hardware key-event data, although the service provider
 receives ordinary connection metadata.
 
 ## Children
@@ -136,11 +124,11 @@ If this policy changes, the updated version will be published in this repository
 
 ## Contact
 
-The developer is KoukeNeko. Questions or privacy requests can be submitted through the public issue
+The developer is alessiocpt. Questions or privacy requests can be submitted through the public issue
 tracker at
-<https://github.com/KoukeNeko/EssentialKeyTools/issues>.
+<https://github.com/alessiocpt/Nothing-Power-Remapper/issues>.
 
 ---
 
-Essential Key Tools is open-source — you can read the full source code at
-<https://github.com/KoukeNeko/EssentialKeyTools> and verify everything described here.
+Nothing Poweruser Remapper is open-source — you can read the full source code at
+<https://github.com/alessiocpt/Nothing-Power-Remapper> and verify everything described here.

@@ -1,1 +1,0 @@
-Reworked the accessibility-service disclosure after Google Play policy review. It now clearly explains why the service is needed, which hardware key-event data is accessed and processed on-device, what is stored, and what is never read or shared. A fixed consent question and clear Decline/Agree choices appear before either enable path.

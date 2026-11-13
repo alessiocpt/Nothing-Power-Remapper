@@ -1,1 +1,0 @@
-Smaller, faster build via R8 code and resource shrinking. No feature changes.

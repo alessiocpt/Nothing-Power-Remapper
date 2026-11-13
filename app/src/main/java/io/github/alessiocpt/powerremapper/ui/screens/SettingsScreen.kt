@@ -52,11 +52,9 @@ import io.github.alessiocpt.powerremapper.ui.components.NothingButton
 import io.github.alessiocpt.powerremapper.ui.components.NothingCard
 import io.github.alessiocpt.powerremapper.ui.components.NothingSectionLabel
 import io.github.alessiocpt.powerremapper.ui.openExternalUrl
-import io.github.alessiocpt.powerremapper.ui.openPlayStoreListing
 import io.github.alessiocpt.powerremapper.ui.screenContentPadding
 import io.github.alessiocpt.powerremapper.updates.AppUpdateCheckerFactory
 import io.github.alessiocpt.powerremapper.updates.UpdateCheckResult
-import io.github.alessiocpt.powerremapper.updates.UpdateDestination
 import io.github.alessiocpt.powerremapper.updates.UpdateSource
 import kotlinx.coroutines.launch
 
@@ -391,7 +389,7 @@ private fun UpdateCard() {
                         UpdateCheckResult.UpToDate -> UpdateUiState.UpToDate
                         is UpdateCheckResult.Available -> UpdateUiState.Available(
                             versionName = result.versionName,
-                            destination = result.destination
+                            releaseUrl = result.releaseUrl
                         )
                     }
                 },
@@ -424,19 +422,8 @@ private fun UpdateCard() {
         val availableState = state as? UpdateUiState.Available
         if (availableState != null) {
             NothingButton(
-                text = stringResource(
-                    when (availableState.destination) {
-                        UpdateDestination.PlayStore -> R.string.action_update_on_play
-                        is UpdateDestination.GitHubRelease -> R.string.action_view_github_release
-                    }
-                ),
-                onClick = {
-                    when (val destination = availableState.destination) {
-                        UpdateDestination.PlayStore -> openPlayStoreListing(context)
-                        is UpdateDestination.GitHubRelease ->
-                            openExternalUrl(context, destination.url)
-                    }
-                },
+                text = stringResource(R.string.action_view_github_release),
+                onClick = { openExternalUrl(context, availableState.releaseUrl) },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(BUTTON_GAP))
@@ -464,8 +451,8 @@ private sealed interface UpdateUiState {
     data object UpToDate : UpdateUiState
     data object Error : UpdateUiState
     data class Available(
-        val versionName: String?,
-        val destination: UpdateDestination
+        val versionName: String,
+        val releaseUrl: String
     ) : UpdateUiState
 }
 
@@ -475,15 +462,11 @@ private fun updateStatusText(state: UpdateUiState): String = when (state) {
     UpdateUiState.Checking -> stringResource(R.string.update_status_checking)
     UpdateUiState.UpToDate -> stringResource(R.string.update_status_up_to_date)
     UpdateUiState.Error -> stringResource(R.string.update_status_error)
-    is UpdateUiState.Available -> if (state.versionName == null) {
-        stringResource(R.string.update_status_available_play)
-    } else {
+    is UpdateUiState.Available ->
         stringResource(R.string.update_status_available_version, state.versionName)
-    }
 }
 
 private fun updateSourceLabelRes(source: UpdateSource): Int = when (source) {
-    UpdateSource.PLAY_STORE -> R.string.update_source_play
     UpdateSource.GITHUB_STABLE -> R.string.update_source_github_stable
     UpdateSource.GITHUB_PREVIEW -> R.string.update_source_github_preview
 }

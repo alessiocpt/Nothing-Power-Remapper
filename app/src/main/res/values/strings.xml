@@ -45,8 +45,6 @@
     <string name="onboarding_language_device_body">Follow your Android system language</string>
     <string name="onboarding_language_english">English</string>
     <string name="onboarding_language_english_body">Use English</string>
-    <string name="onboarding_language_traditional_chinese">繁體中文</string>
-    <string name="onboarding_language_traditional_chinese_body">Use Traditional Chinese</string>
     <string name="onboarding_title">ONBOARDING</string>
     <string name="onboarding_step_intro">02 / 03 · Welcome</string>
     <string name="onboarding_intro_headline">MAKE THE ESSENTIAL KEY YOURS</string>
@@ -215,18 +213,15 @@
     <!-- Updates -->
     <string name="section_updates">Updates</string>
     <string name="update_current_version">Current version: %1$s</string>
-    <string name="update_source_play">Source: Google Play</string>
     <string name="update_source_github_stable">Source: stable GitHub releases</string>
     <string name="update_source_github_preview">Source: GitHub pre-releases</string>
     <string name="update_status_idle">Check manually to see whether a newer version is available.</string>
     <string name="update_status_checking">Checking for updates…</string>
     <string name="update_status_up_to_date">You’re using the latest version.</string>
-    <string name="update_status_available_play">A newer version is available on Google Play.</string>
     <string name="update_status_available_version">Version %1$s is available.</string>
     <string name="update_status_error">Couldn’t check for updates. Check your connection and try again.</string>
     <string name="action_check_updates">Check for updates</string>
     <string name="action_check_updates_again">Check again</string>
-    <string name="action_update_on_play">Update on Google Play</string>
     <string name="action_view_github_release">View GitHub release</string>
 
     <!-- Contribution -->

@@ -48,7 +48,7 @@ android {
     }
     buildTypes {
         debug {
-            // Preview builds install beside the Play/release app and are clearly labelled, so the
+            // Preview builds install beside the release app and are clearly labelled, so the
             // user can test CI artifacts without replacing their production installation.
             applicationIdSuffix = ".preview"
         }
@@ -93,8 +93,6 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.datastore.preferences)
-    implementation(libs.play.app.update)
-    implementation(libs.play.app.update.ktx)
     implementation(libs.shizuku.api)
     implementation(libs.shizuku.provider)
     testImplementation(libs.junit)

@@ -70,9 +70,9 @@ already removed in `b252534`, together with the debug source set's copy.) Rewrit
 from GitHub releases. Remove its screenshots, which pointed into `fastlane/`.
 
 **Acceptance criteria:**
-- [ ] The release workflow builds and publishes only the signed APK to GitHub releases.
-- [ ] No `values-*` locale directories remain; lint has no missing-translation errors.
-- [ ] README has no links into deleted paths or upstream badges.
+- [x] The release workflow builds and publishes only the signed APK to GitHub releases.
+- [x] No `values-*` locale directories remain; lint has no missing-translation errors.
+- [x] README has no links into deleted paths or upstream badges.
 
 **Verification:**
 - [ ] `./scripts/verify.sh` passes
@@ -420,4 +420,5 @@ description mentions that single press needs the unlock wizard.
 ---
 
 ## Later
+- [ ] Remove the onboarding language step and the Settings language card. The app is English only, so the step offers only "Device language" and "English". (Task 3 only removed the Traditional Chinese option.)
 - [ ] Spike: cycle Nothing Camera zoom presets by clicking them (needs window-content access scoped to Nothing Camera; decide after the spike)
