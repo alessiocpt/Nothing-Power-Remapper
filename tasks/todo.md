@@ -20,9 +20,9 @@ display name to "Nothing Poweruser Remapper". This is a mechanical move only, wi
 change, done in one commit so later diffs stay clean.
 
 **Acceptance criteria:**
-- [ ] No `dev.koukeneko` remains in `app/` (`grep -r dev.koukeneko app/` is empty), including the AIDL package and the manifest.
+- [x] No `dev.koukeneko` remains in `app/` (`grep -r dev.koukeneko app/` is empty), including the AIDL package and the manifest.
 - [ ] The debug build installs next to upstream EssentialKeyTools as a separate app.
-- [ ] Internal class names (`EssentialKeyToolsApplication`, `EssentialKeyToolsTheme`) and the DataStore name stay as they are. The new `applicationId` already gives the app its own data directory, so renaming them would only add churn.
+- [x] Internal class names (`EssentialKeyToolsApplication`, `EssentialKeyToolsTheme`) and the DataStore name stay as they are. The new `applicationId` already gives the app its own data directory, so renaming them would only add churn.
 
 **Verification:**
 - [ ] `./scripts/verify.sh` passes
@@ -44,9 +44,9 @@ contributors list with a static "Based on" credits section naming EssentialKeyTo
 and NothingButtonRemapper (THE-TECH-CHANGER). Add both MIT copyright notices to `LICENSE`.
 
 **Acceptance criteria:**
-- [ ] `grep -ri koukeneko app/src` only matches the credits text.
-- [ ] The `contributors/` package and its test are deleted; Settings shows the static credits.
-- [ ] `LICENSE` contains the fork's notice plus both upstream MIT notices.
+- [x] `grep -ri koukeneko app/src` only matches the credits text.
+- [x] The `contributors/` package and its test are deleted; Settings shows the static credits.
+- [x] `LICENSE` contains the fork's notice plus both upstream MIT notices.
 
 **Verification:**
 - [ ] `./scripts/verify.sh` passes
@@ -62,9 +62,11 @@ and NothingButtonRemapper (THE-TECH-CHANGER). Add both MIT copyright notices to 
 
 ## Task 3: Remove Play distribution, fastlane and the zh-TW translation
 
-**Description:** Delete `fastlane/`, `res/values-zh-rTW/`, `distribution/whatsnew/`,
+**Description:** Delete `fastlane/`, `distribution/whatsnew/`,
 `.github/workflows/sync-play-metadata.yml`, and the Play upload steps and AAB build in
-`release.yml`. Rewrite the README briefly for the fork: what it is, credits, how to install
+`release.yml`. Also remove the app's Play update path: `UpdateSource.PLAY_STORE`,
+`PlayStoreUpdateChecker`, `openPlayStoreListing` and the Play strings. (The zh-TW translation was
+already removed in `b252534`, together with the debug source set's copy.) Rewrite the README briefly for the fork: what it is, credits, how to install
 from GitHub releases. Remove its screenshots, which pointed into `fastlane/`.
 
 **Acceptance criteria:**
