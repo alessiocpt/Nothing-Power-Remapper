@@ -109,18 +109,18 @@ private fun <T> prependCapped(target: MutableList<T>, item: T) {
 }
 
 /**
- * The app the service currently treats as in front. This screen belongs to this app, which never
- * counts, so it shows the last app used before opening it.
+ * The last few apps the service treated as in front, newest first. This screen belongs to this
+ * app, which never counts, and reaching it passes through the launcher, so the history is what
+ * shows whether a shade, keyboard or dialog was correctly ignored along the way.
  */
 @Composable
 private fun ForegroundAppCard() {
     val context = LocalContext.current
-    val foregroundApp by EssentialKeyDetectionService.foregroundApp.collectAsState()
+    val recentApps by EssentialKeyDetectionService.recentForegroundApps.collectAsState()
     NothingCard(modifier = Modifier.fillMaxWidth()) {
         NothingSectionLabel(text = stringResource(R.string.test_section_foreground_app))
         Spacer(modifier = Modifier.height(LABEL_GAP))
-        val packageName = foregroundApp
-        if (packageName == null) {
+        if (recentApps.isEmpty()) {
             Text(
                 text = stringResource(R.string.test_foreground_app_none),
                 style = MaterialTheme.typography.bodyMedium,
@@ -128,15 +128,27 @@ private fun ForegroundAppCard() {
             )
         } else {
             Text(
-                text = AppLabelResolver.labelFor(context, packageName),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            Text(
-                text = packageName,
+                text = stringResource(R.string.test_foreground_app_caption),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
+            Spacer(modifier = Modifier.height(LOG_ROW_GAP))
+            Column(verticalArrangement = Arrangement.spacedBy(LOG_ROW_GAP)) {
+                for (packageName in recentApps) {
+                    Column {
+                        Text(
+                            text = AppLabelResolver.labelFor(context, packageName),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                        Text(
+                            text = packageName,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            }
         }
     }
 }

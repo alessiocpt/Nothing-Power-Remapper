@@ -235,8 +235,11 @@ class EssentialKeyDetectionService : AccessibilityService() {
             isActivity = isActivity(windowPackage, event.className?.toString()),
             currentImePackage = inputMethodManager.currentInputMethodInfo?.packageName
         )
-        if (changed) {
-            foregroundAppState.value = foregroundAppTracker.foregroundApp
+        val foregroundApp = foregroundAppTracker.foregroundApp
+        if (changed && foregroundApp != null) {
+            foregroundAppState.value = foregroundApp
+            recentForegroundAppsState.value =
+                (listOf(foregroundApp) + recentForegroundAppsState.value).take(RECENT_FOREGROUND_APPS)
         }
     }
 
@@ -278,6 +281,7 @@ class EssentialKeyDetectionService : AccessibilityService() {
     private fun tearDown() {
         isRunning = false
         foregroundAppState.value = null
+        recentForegroundAppsState.value = emptyList()
         classifier?.reset()
         suppressNextClassifiedAction = false
         mainHandler.removeCallbacksAndMessages(null)
@@ -297,5 +301,14 @@ class EssentialKeyDetectionService : AccessibilityService() {
 
         /** The Foreground App's package, or null until the service has seen one or while it is off. */
         val foregroundApp: StateFlow<String?> = foregroundAppState.asStateFlow()
+
+        private const val RECENT_FOREGROUND_APPS = 5
+        private val recentForegroundAppsState = MutableStateFlow<List<String>>(emptyList())
+
+        /**
+         * The last few Foreground Apps, newest first, for Key Test. Reaching Key Test always passes
+         * through the launcher, so the current Foreground App alone cannot show what came before.
+         */
+        val recentForegroundApps: StateFlow<List<String>> = recentForegroundAppsState.asStateFlow()
     }
 }
