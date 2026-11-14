@@ -63,6 +63,27 @@ class ActionExecutor(
             is KeyAction.MediaPrevious -> dispatchMediaKey(KeyEvent.KEYCODE_MEDIA_PREVIOUS)
             is KeyAction.RingerCycle -> cycleRingerMode()
             is KeyAction.ToggleGlyphLight -> toggleGlyphLight()
+            is KeyAction.GoHome -> performGlobalAction(
+                AccessibilityService.GLOBAL_ACTION_HOME,
+                R.string.error_system_action_failed
+            )
+            is KeyAction.GoBack -> performGlobalAction(
+                AccessibilityService.GLOBAL_ACTION_BACK,
+                R.string.error_system_action_failed
+            )
+            is KeyAction.ShowRecents -> performGlobalAction(
+                AccessibilityService.GLOBAL_ACTION_RECENTS,
+                R.string.error_system_action_failed
+            )
+            is KeyAction.ShowPowerMenu -> performGlobalAction(
+                AccessibilityService.GLOBAL_ACTION_POWER_DIALOG,
+                R.string.error_system_action_failed
+            )
+            is KeyAction.ToggleSplitScreen -> performGlobalAction(
+                AccessibilityService.GLOBAL_ACTION_TOGGLE_SPLIT_SCREEN,
+                R.string.error_system_action_failed
+            )
+            is KeyAction.AdjustVolume -> adjustVolume(action.direction)
         }
     }
 
@@ -175,6 +196,26 @@ class ActionExecutor(
         }
         audioManager.dispatchMediaKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, keyCode))
         audioManager.dispatchMediaKeyEvent(KeyEvent(KeyEvent.ACTION_UP, keyCode))
+    }
+
+    /**
+     * Moves the volume one step and shows the system panel, like the volume keys. Android picks the
+     * stream, so it changes media volume while something plays and the ringer otherwise.
+     */
+    private fun adjustVolume(direction: VolumeDirection) {
+        val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as? AudioManager
+        if (audioManager == null) {
+            toast(R.string.error_media_unavailable)
+            return
+        }
+        audioManager.adjustSuggestedStreamVolume(
+            when (direction) {
+                VolumeDirection.UP -> AudioManager.ADJUST_RAISE
+                VolumeDirection.DOWN -> AudioManager.ADJUST_LOWER
+            },
+            AudioManager.USE_DEFAULT_STREAM_TYPE,
+            AudioManager.FLAG_SHOW_UI
+        )
     }
 
     private fun cycleRingerMode() {

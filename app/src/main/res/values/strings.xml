@@ -143,6 +143,14 @@
     <string name="picker_saved">Action saved</string>
 
     <!-- Action names -->
+    <string name="action_volume_up">Volume up</string>
+    <string name="action_volume_down">Volume down</string>
+    <string name="action_go_home">Home screen</string>
+    <string name="action_go_back">Back</string>
+    <string name="action_show_recents">Recent apps</string>
+    <string name="action_show_power_menu">Power menu</string>
+    <string name="action_toggle_split_screen">Split screen</string>
+    <string name="error_system_action_failed">Android did not run that system action.</string>
     <string name="action_none">Do nothing</string>
     <string name="action_launch_app">Launch app</string>
     <string name="action_toggle_flashlight">Toggle flashlight</string>

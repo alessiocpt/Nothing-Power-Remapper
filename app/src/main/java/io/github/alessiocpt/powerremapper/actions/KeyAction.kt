@@ -79,6 +79,48 @@ sealed interface KeyAction {
         const val ID: String = "toggle_glyph_light"
     }
 
+    /** Goes to the home screen via the accessibility global action. */
+    data object GoHome : KeyAction {
+        override val id: String = ID
+        const val ID: String = "go_home"
+    }
+
+    /** Goes back via the accessibility global action. */
+    data object GoBack : KeyAction {
+        override val id: String = ID
+        const val ID: String = "go_back"
+    }
+
+    /** Opens the recent-apps overview via the accessibility global action. */
+    data object ShowRecents : KeyAction {
+        override val id: String = ID
+        const val ID: String = "show_recents"
+    }
+
+    /** Opens the power menu via the accessibility global action. */
+    data object ShowPowerMenu : KeyAction {
+        override val id: String = ID
+        const val ID: String = "show_power_menu"
+    }
+
+    /** Enters or leaves split screen via the accessibility global action. */
+    data object ToggleSplitScreen : KeyAction {
+        override val id: String = ID
+        const val ID: String = "toggle_split_screen"
+    }
+
+    /**
+     * Raises or lowers the volume of whatever is playing, showing the system volume panel. Not the
+     * same as sending a volume key to an app, which Camera Shutter does.
+     */
+    data class AdjustVolume(val direction: VolumeDirection) : KeyAction {
+        override val id: String = ID
+
+        companion object {
+            const val ID: String = "adjust_volume"
+        }
+    }
+
     companion object {
         /**
          * Rebuilds a [KeyAction] from its persisted [id] and optional [payload]. Unknown ids fall
@@ -95,13 +137,31 @@ sealed interface KeyAction {
             MediaPrevious.ID -> MediaPrevious
             RingerCycle.ID -> RingerCycle
             ToggleGlyphLight.ID -> ToggleGlyphLight
+            GoHome.ID -> GoHome
+            GoBack.ID -> GoBack
+            ShowRecents.ID -> ShowRecents
+            ShowPowerMenu.ID -> ShowPowerMenu
+            ToggleSplitScreen.ID -> ToggleSplitScreen
+            AdjustVolume.ID -> VolumeDirection.fromPersisted(payload)?.let(::AdjustVolume) ?: DoNothing
             else -> DoNothing
         }
 
         /** The optional payload to persist alongside a [KeyAction]'s id, or null if it has none. */
         fun payloadOf(action: KeyAction): String? = when (action) {
             is LaunchApp -> action.packageName
+            is AdjustVolume -> action.direction.persisted
             else -> null
         }
+    }
+}
+
+/** Which way [KeyAction.AdjustVolume] moves the volume. */
+enum class VolumeDirection(val persisted: String) {
+    UP("up"),
+    DOWN("down");
+
+    companion object {
+        fun fromPersisted(value: String?): VolumeDirection? =
+            entries.firstOrNull { direction -> direction.persisted == value }
     }
 }

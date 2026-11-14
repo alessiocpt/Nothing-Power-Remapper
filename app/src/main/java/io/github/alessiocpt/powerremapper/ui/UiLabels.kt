@@ -2,6 +2,7 @@ package io.github.alessiocpt.powerremapper.ui
 
 import io.github.alessiocpt.powerremapper.R
 import io.github.alessiocpt.powerremapper.actions.KeyAction
+import io.github.alessiocpt.powerremapper.actions.VolumeDirection
 import io.github.alessiocpt.powerremapper.core.KeyGesture
 
 /**
@@ -18,10 +19,18 @@ object UiLabels {
     }
 
     /**
-     * The label resource for a built-in action id. [KeyAction.LaunchApp] is deliberately omitted:
+     * The label resource for a built-in action. [KeyAction.LaunchApp] is deliberately omitted:
      * a launch action shows the resolved app name, which is not a static resource.
      */
-    fun builtInActionLabelRes(actionId: String): Int = when (actionId) {
+    fun builtInActionLabelRes(action: KeyAction): Int = when (action) {
+        is KeyAction.AdjustVolume -> when (action.direction) {
+            VolumeDirection.UP -> R.string.action_volume_up
+            VolumeDirection.DOWN -> R.string.action_volume_down
+        }
+        else -> labelResForId(action.id)
+    }
+
+    private fun labelResForId(actionId: String): Int = when (actionId) {
         KeyAction.DoNothing.ID -> R.string.action_none
         KeyAction.ToggleFlashlight.ID -> R.string.action_toggle_flashlight
         KeyAction.TakeScreenshot.ID -> R.string.action_take_screenshot
@@ -31,6 +40,11 @@ object UiLabels {
         KeyAction.MediaPrevious.ID -> R.string.action_media_previous
         KeyAction.RingerCycle.ID -> R.string.action_ringer_cycle
         KeyAction.ToggleGlyphLight.ID -> R.string.action_toggle_glyph_light
+        KeyAction.GoHome.ID -> R.string.action_go_home
+        KeyAction.GoBack.ID -> R.string.action_go_back
+        KeyAction.ShowRecents.ID -> R.string.action_show_recents
+        KeyAction.ShowPowerMenu.ID -> R.string.action_show_power_menu
+        KeyAction.ToggleSplitScreen.ID -> R.string.action_toggle_split_screen
         else -> R.string.action_none
     }
 
@@ -49,6 +63,13 @@ object UiLabels {
         KeyAction.MediaNext,
         KeyAction.MediaPrevious,
         KeyAction.RingerCycle,
+        KeyAction.AdjustVolume(VolumeDirection.UP),
+        KeyAction.AdjustVolume(VolumeDirection.DOWN),
+        KeyAction.GoHome,
+        KeyAction.GoBack,
+        KeyAction.ShowRecents,
+        KeyAction.ShowPowerMenu,
+        KeyAction.ToggleSplitScreen,
         KeyAction.ToggleGlyphLight
     )
 }

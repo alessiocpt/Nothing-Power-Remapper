@@ -22,7 +22,7 @@ class UiLabelsTest {
             assertNotEquals(
                 "${action.id} has no label of its own",
                 R.string.action_none,
-                UiLabels.builtInActionLabelRes(action.id)
+                UiLabels.builtInActionLabelRes(action)
             )
         }
     }

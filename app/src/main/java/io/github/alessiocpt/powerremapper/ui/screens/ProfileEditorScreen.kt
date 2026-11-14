@@ -166,7 +166,7 @@ private fun slotLabel(context: Context, slot: GestureSlot, resolved: KeyAction):
 
 private fun actionLabel(context: Context, action: KeyAction): String = when (action) {
     is KeyAction.LaunchApp -> AppLabelResolver.labelFor(context, action.packageName)
-    else -> context.getString(UiLabels.builtInActionLabelRes(action.id))
+    else -> context.getString(UiLabels.builtInActionLabelRes(action))
 }
 
 @Composable

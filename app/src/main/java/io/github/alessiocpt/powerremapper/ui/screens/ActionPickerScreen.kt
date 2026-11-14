@@ -210,7 +210,7 @@ private fun filterBuiltInActions(
     if (query.isBlank()) return actions
     val needle = query.trim().lowercase()
     return actions.filter { action ->
-        val label = context.getString(UiLabels.builtInActionLabelRes(action.id))
+        val label = context.getString(UiLabels.builtInActionLabelRes(action))
         label.lowercase().contains(needle)
     }
 }
@@ -267,7 +267,7 @@ private fun BuiltInActionsCard(
             for (action in actions) {
                 val unavailable = action in unavailableActions
                 ActionTextRow(
-                    label = stringResource(UiLabels.builtInActionLabelRes(action.id)),
+                    label = stringResource(UiLabels.builtInActionLabelRes(action)),
                     onClick = { onSelect(action) },
                     caption = if (unavailable) {
                         stringResource(R.string.picker_unavailable_in_camera)

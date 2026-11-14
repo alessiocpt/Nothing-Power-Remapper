@@ -284,10 +284,10 @@ volume panel shown. Each one needs its id, persistence, picker entry, label and 
 
 **Acceptance criteria:**
 - [ ] Each action works on the phone from any Gesture.
-- [ ] `AdjustVolume` persists its direction as the payload, and the round trip is tested.
+- [x] `AdjustVolume` persists its direction as the payload, and the round trip is tested.
 
 **Verification:**
-- [ ] `./gradlew testDebugUnitTest --tests '*KeyAction*' --tests '*ProfileSerialization*'`, then `./scripts/verify.sh`
+- [x] `./gradlew testDebugUnitTest --tests '*KeyAction*' --tests '*ProfileSerialization*'`, then `./scripts/verify.sh`
 - [ ] Manual check on the phone
 
 **Dependencies:** Checkpoint C (independent of Tasks 12–15)

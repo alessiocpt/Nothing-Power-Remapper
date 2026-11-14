@@ -384,7 +384,7 @@ private fun ActionLabel(action: KeyAction, context: Context) {
     }
     val label = when (action) {
         is KeyAction.LaunchApp -> AppLabelResolver.labelFor(context, action.packageName)
-        else -> stringResource(UiLabels.builtInActionLabelRes(action.id))
+        else -> stringResource(UiLabels.builtInActionLabelRes(action))
     }
     Text(
         text = label,
