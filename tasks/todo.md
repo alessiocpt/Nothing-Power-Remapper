@@ -353,11 +353,11 @@ read, and the picker notes that some apps ignore them.
 
 **Acceptance criteria:**
 - [x] Photo and video open Nothing Camera in the right mode (selfie dropped: Nothing Camera has no public front-camera request)
-- [ ] On the lock screen, with "only when unlocked" off, photo mode opens over the keyguard.
+- [x] On the lock screen, with "only when unlocked" off, photo mode opens over the keyguard.
 - [x] The mode persists as the payload, and the round trip is tested.
 
 **Verification:**
-- [ ] `./scripts/verify.sh`; manual check on the phone
+- [x] `./scripts/verify.sh`; manual check on the phone
 
 **Dependencies:** Checkpoint C
 
@@ -376,12 +376,12 @@ Then rename `IPackageToggleService` to `IShellService` and add `injectKey(keyCod
 `CameraShutter` action, which calls it through the existing Shizuku binding.
 
 **Acceptance criteria:**
-- [ ] The manual key test result is recorded in the commit message.
-- [ ] `injectKey` rejects key codes outside the allowlist, and a unit test covers the command builder.
+- [x] The manual key test result is recorded in the commit message.
+- [x] `injectKey` rejects key codes outside the allowlist, and a unit test covers the command builder.
 - [ ] With Shizuku running, Camera Shutter takes a photo in Nothing Camera, and starts and stops recording in video mode.
 
 **Verification:**
-- [ ] `./gradlew testDebugUnitTest --tests '*Shell*'`, then `./scripts/verify.sh`
+- [x] `./gradlew testDebugUnitTest --tests '*Shell*'`, then `./scripts/verify.sh`
 - [ ] Manual check on the phone
 
 **Dependencies:** Checkpoint C

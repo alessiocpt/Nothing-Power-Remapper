@@ -137,6 +137,15 @@ sealed interface KeyAction {
     }
 
     /**
+     * Sends the camera shutter key to the Foreground App through Shizuku, so a camera app takes a
+     * photo, or starts or stops recording in video mode. Needs Shizuku running and granted.
+     */
+    data object CameraShutter : KeyAction {
+        override val id: String = ID
+        const val ID: String = "camera_shutter"
+    }
+
+    /**
      * Raises or lowers the volume of whatever is playing, showing the system volume panel. Not the
      * same as sending a volume key to an app, which Camera Shutter does.
      */
@@ -171,6 +180,7 @@ sealed interface KeyAction {
             GoBack.ID -> GoBack
             ShowRecents.ID -> ShowRecents
             ShowPowerMenu.ID -> ShowPowerMenu
+            CameraShutter.ID -> CameraShutter
             LaunchCamera.ID -> CameraMode.fromPersisted(payload)?.let(::LaunchCamera) ?: DoNothing
             AdjustVolume.ID -> VolumeDirection.fromPersisted(payload)?.let(::AdjustVolume) ?: DoNothing
             else -> DoNothing

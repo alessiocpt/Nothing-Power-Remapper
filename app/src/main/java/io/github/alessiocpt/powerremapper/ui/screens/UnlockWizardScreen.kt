@@ -35,7 +35,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import io.github.alessiocpt.powerremapper.R
 import io.github.alessiocpt.powerremapper.unlock.PackageState
-import io.github.alessiocpt.powerremapper.unlock.ShizukuPackageToggler
+import io.github.alessiocpt.powerremapper.unlock.ShizukuShell
 import io.github.alessiocpt.powerremapper.unlock.ShizukuStatus
 import io.github.alessiocpt.powerremapper.unlock.UnlockerFactory
 import io.github.alessiocpt.powerremapper.ui.AppLabelResolver
@@ -65,7 +65,7 @@ fun UnlockWizardScreen(
     val context = LocalContext.current
     val unlocker = remember { UnlockerFactory.create(context) }
 
-    val shizuku = remember { ShizukuPackageToggler(context) }
+    val shizuku = remember { ShizukuShell(context) }
     val coroutineScope = rememberCoroutineScope()
 
     var packageStates by remember { mutableStateOf(unlocker.readPackageStates()) }

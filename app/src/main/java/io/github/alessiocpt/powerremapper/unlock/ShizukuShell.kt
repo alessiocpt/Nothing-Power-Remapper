@@ -16,19 +16,25 @@ import kotlinx.coroutines.withTimeout
 import rikka.shizuku.Shizuku
 
 /**
- * Enables and disables consumer packages through Shizuku, for builds where App Info greys out the
- * Disable button. Owns every call into the Shizuku API so the rest of the app only sees
- * [ShizukuStatus] and [setPackageEnabled].
+ * Runs shell commands through Shizuku: enabling and disabling consumer packages, for builds where
+ * App Info greys out the Disable button, and sending the camera shutter key. Owns every call into
+ * the Shizuku API so the rest of the app only sees [ShizukuStatus], [setPackageEnabled] and
+ * [injectKey].
  */
-class ShizukuPackageToggler(context: Context) {
+class ShizukuShell(context: Context) {
 
     private val userServiceArgs = Shizuku.UserServiceArgs(
-        ComponentName(context.packageName, PackageToggleService::class.java.name)
+        ComponentName(context.packageName, ShellService::class.java.name)
     )
         .processNameSuffix(SERVICE_PROCESS_SUFFIX)
         .daemon(false)
 
     private val userId = Process.myUid() / PER_USER_UID_RANGE
+
+    // Kept bound between key presses: starting the service process takes long enough to make a
+    // camera shutter feel broken. Package toggling stays one bind per call, as it is rare.
+    private var keyService: IShellService? = null
+    private var keyConnection: ServiceConnection? = null
 
     fun status(): ShizukuStatus = when {
         !Shizuku.pingBinder() -> ShizukuStatus.NOT_RUNNING
@@ -58,10 +64,10 @@ class ShizukuPackageToggler(context: Context) {
 
     /** Returns whether `pm` accepted the change. Binds a fresh service for each call and releases it. */
     suspend fun setPackageEnabled(packageName: String, enabled: Boolean): Boolean {
-        val service = CompletableDeferred<IPackageToggleService>()
+        val service = CompletableDeferred<IShellService>()
         val connection = object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName, binder: IBinder) {
-                service.complete(IPackageToggleService.Stub.asInterface(binder))
+                service.complete(IShellService.Stub.asInterface(binder))
             }
 
             override fun onServiceDisconnected(name: ComponentName) {
@@ -84,8 +90,53 @@ class ShizukuPackageToggler(context: Context) {
         }
     }
 
+    /**
+     * Sends an allowlisted key through the shell. Returns false when Shizuku is not ready, the
+     * service cannot start, or the key is refused.
+     */
+    suspend fun injectKey(keyCode: Int): Boolean {
+        if (status() != ShizukuStatus.READY) return false
+        return try {
+            val service = keyService ?: bindKeyService()
+            withContext(Dispatchers.IO) { service.injectKey(keyCode) }
+        } catch (error: RemoteException) {
+            Log.w(TAG, "Shizuku could not inject key $keyCode", error)
+            releaseKeyService()
+            false
+        } catch (error: TimeoutCancellationException) {
+            Log.w(TAG, "Shizuku user service did not start for key $keyCode", error)
+            releaseKeyService()
+            false
+        }
+    }
+
+    private suspend fun bindKeyService(): IShellService {
+        val service = CompletableDeferred<IShellService>()
+        val connection = object : ServiceConnection {
+            override fun onServiceConnected(name: ComponentName, binder: IBinder) {
+                service.complete(IShellService.Stub.asInterface(binder))
+            }
+
+            override fun onServiceDisconnected(name: ComponentName) {
+                keyService = null
+                service.completeExceptionally(RemoteException("Shizuku user service disconnected"))
+            }
+        }
+        keyConnection = connection
+        Shizuku.bindUserService(userServiceArgs, connection)
+        return withTimeout(BIND_TIMEOUT_MS) { service.await() }.also { keyService = it }
+    }
+
+    private fun releaseKeyService() {
+        keyConnection?.let { connection ->
+            runCatching { Shizuku.unbindUserService(userServiceArgs, connection, true) }
+        }
+        keyConnection = null
+        keyService = null
+    }
+
     private companion object {
-        const val TAG = "ShizukuPackageToggler"
+        const val TAG = "ShizukuShell"
         const val SERVICE_PROCESS_SUFFIX = "package_toggle"
         const val PERMISSION_REQUEST_CODE = 1
         const val BIND_TIMEOUT_MS = 10_000L

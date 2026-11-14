@@ -48,6 +48,7 @@ object UiLabels {
         KeyAction.ToggleNotifications.ID -> R.string.action_toggle_notifications
         KeyAction.ToggleQuickSettings.ID -> R.string.action_toggle_quick_settings
         KeyAction.LaunchAssistant.ID -> R.string.action_launch_assistant
+        KeyAction.CameraShutter.ID -> R.string.action_camera_shutter
         KeyAction.GoHome.ID -> R.string.action_go_home
         KeyAction.GoBack.ID -> R.string.action_go_back
         KeyAction.ShowRecents.ID -> R.string.action_show_recents
@@ -72,6 +73,7 @@ object UiLabels {
         KeyAction.RingerCycle,
         KeyAction.LaunchAssistant,
         KeyAction.LaunchCamera(CameraMode.PHOTO),
+        KeyAction.CameraShutter,
         KeyAction.LaunchCamera(CameraMode.VIDEO),
         KeyAction.ToggleNotifications,
         KeyAction.ToggleQuickSettings,

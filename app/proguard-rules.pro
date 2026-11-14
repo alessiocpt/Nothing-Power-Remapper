@@ -27,6 +27,6 @@
 
 # Shizuku instantiates the user service by class name in another process, so nothing in this app
 # references its constructor.
--keep class io.github.alessiocpt.powerremapper.unlock.PackageToggleService {
+-keep class io.github.alessiocpt.powerremapper.unlock.ShellService {
     <init>();
 }

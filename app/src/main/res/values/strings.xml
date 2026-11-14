@@ -149,6 +149,8 @@
     <string name="action_launch_camera_photo">Camera: photo</string>
     <string name="action_launch_camera_video">Camera: video</string>
     <string name="error_camera_unavailable">No camera app could be opened.</string>
+    <string name="action_camera_shutter">Camera shutter</string>
+    <string name="error_shizuku_not_running">Camera shutter needs Shizuku running and allowed for this app.</string>
     <string name="action_toggle_notifications">Toggle notifications</string>
     <string name="action_toggle_quick_settings">Toggle Quick Settings</string>
     <string name="action_volume_up">Volume up</string>

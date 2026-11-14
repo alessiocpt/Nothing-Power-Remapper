@@ -21,6 +21,11 @@ import io.github.alessiocpt.powerremapper.R
 import io.github.alessiocpt.powerremapper.glyph.GlyphDevice
 import io.github.alessiocpt.powerremapper.glyph.GlyphLight
 import io.github.alessiocpt.powerremapper.glyph.MatrixGlyphLight
+import io.github.alessiocpt.powerremapper.unlock.ShizukuShell
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 /**
  * Runs a [KeyAction]. Actions that need system-level reach (screenshot, lock screen) require the
@@ -51,6 +56,10 @@ class ActionExecutor(
     // cannot tell open from closed there; the last toggle issued while locked stands in for it.
     private var shadeOpenedWhileLocked = false
 
+    // Created on first use: only Camera Shutter needs Shizuku, and the shell stays bound after.
+    private val shizukuShell by lazy { ShizukuShell(context) }
+    private val shellScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+
     private var glyphLightBound = false
     private var glyphLightOn = false
 
@@ -79,6 +88,7 @@ class ActionExecutor(
                 toggleShade(AccessibilityService.GLOBAL_ACTION_QUICK_SETTINGS)
             is KeyAction.LaunchAssistant -> launchAssistant()
             is KeyAction.LaunchCamera -> launchCamera(action.mode)
+            is KeyAction.CameraShutter -> pressCameraShutter()
             is KeyAction.GoHome -> performGlobalAction(
                 AccessibilityService.GLOBAL_ACTION_HOME,
                 R.string.error_system_action_failed
@@ -285,6 +295,15 @@ class ActionExecutor(
         } catch (error: android.content.ActivityNotFoundException) {
             Log.w(TAG, "No camera app answers ${intent.action}", error)
             toast(R.string.error_camera_unavailable)
+        }
+    }
+
+    /** Sends the shutter key through Shizuku; says so when Shizuku is not ready. */
+    private fun pressCameraShutter() {
+        shellScope.launch {
+            if (!shizukuShell.injectKey(KeyEvent.KEYCODE_CAMERA)) {
+                toast(R.string.error_shizuku_not_running)
+            }
         }
     }
 
