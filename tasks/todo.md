@@ -131,16 +131,16 @@ Add pure types:
 `ProfileSet.activeGestures(foregroundApp)` drives the classifier.
 
 **Acceptance criteria:**
-- [ ] Inherit with an Unassigned slot gives the Default's action. Isolated with an Unassigned slot gives Do Nothing. An Assigned Do Nothing always gives Do Nothing.
-- [ ] A null Foreground App, or one with no Profile, uses the Default Profile.
-- [ ] New Profiles start as INHERIT with every slot Unassigned.
+- [x] Inherit with an Unassigned slot gives the Default's action. Isolated with an Unassigned slot gives Do Nothing. An Assigned Do Nothing always gives Do Nothing.
+- [x] A null Foreground App, or one with no Profile, uses the Default Profile.
+- [x] New Profiles start as INHERIT with every slot Unassigned.
 
 **Verification:**
-- [ ] `./gradlew testDebugUnitTest --tests '*Profile*' --tests '*GestureActionMap*'`
+- [x] `./gradlew testDebugUnitTest --tests '*Profile*' --tests '*GestureActionMap*'`
 
 **Dependencies:** Checkpoint A (independent of Task 4)
 
-**Files likely touched:** `actions/KeyAction.kt`, `settings/Profile.kt` (new), `settings/ProfileSet.kt` (new), tests, callers of `KeyAction.None`
+**Files likely touched:** `actions/KeyAction.kt`, `settings/Profile.kt` (new; holds `GestureSlot`, `Fallback`, `Profile` and `ProfileSet`), tests, callers of `KeyAction.None`
 
 **Estimated scope:** Medium
 
