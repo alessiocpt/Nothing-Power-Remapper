@@ -119,6 +119,15 @@ sealed interface KeyAction {
     }
 
     /**
+     * Opens the app set as the device's default digital assistant, the way the assistant gesture
+     * does, so with Claude as the assistant it opens Claude ready to talk.
+     */
+    data object LaunchAssistant : KeyAction {
+        override val id: String = ID
+        const val ID: String = "launch_assistant"
+    }
+
+    /**
      * Raises or lowers the volume of whatever is playing, showing the system volume panel. Not the
      * same as sending a volume key to an app, which Camera Shutter does.
      */
@@ -146,6 +155,7 @@ sealed interface KeyAction {
             MediaPrevious.ID -> MediaPrevious
             RingerCycle.ID -> RingerCycle
             ToggleGlyphLight.ID -> ToggleGlyphLight
+            LaunchAssistant.ID -> LaunchAssistant
             GoHome.ID -> GoHome
             ToggleNotifications.ID -> ToggleNotifications
             ToggleQuickSettings.ID -> ToggleQuickSettings

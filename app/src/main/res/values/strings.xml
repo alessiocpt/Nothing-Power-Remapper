@@ -143,6 +143,9 @@
     <string name="picker_saved">Action saved</string>
 
     <!-- Action names -->
+    <string name="action_launch_assistant">Launch assistant</string>
+    <string name="error_no_default_assistant">No default assistant is set. Choose one in Settings › Apps › Default apps › Digital assistant app.</string>
+    <string name="picker_no_default_assistant">No default assistant set: choose one in Settings › Apps › Default apps</string>
     <string name="action_toggle_notifications">Toggle notifications</string>
     <string name="action_toggle_quick_settings">Toggle Quick Settings</string>
     <string name="action_volume_up">Volume up</string>

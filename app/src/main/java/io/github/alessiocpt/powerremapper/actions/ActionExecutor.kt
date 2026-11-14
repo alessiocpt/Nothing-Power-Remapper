@@ -3,12 +3,14 @@ package io.github.alessiocpt.powerremapper.actions
 import android.accessibilityservice.AccessibilityService
 import android.app.KeyguardManager
 import android.app.NotificationManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
 import android.media.AudioManager
+import android.provider.Settings
 import android.util.Log
 import android.view.KeyEvent
 import android.view.WindowManager
@@ -74,6 +76,7 @@ class ActionExecutor(
                 toggleShade(AccessibilityService.GLOBAL_ACTION_NOTIFICATIONS)
             is KeyAction.ToggleQuickSettings ->
                 toggleShade(AccessibilityService.GLOBAL_ACTION_QUICK_SETTINGS)
+            is KeyAction.LaunchAssistant -> launchAssistant()
             is KeyAction.GoHome -> performGlobalAction(
                 AccessibilityService.GLOBAL_ACTION_HOME,
                 R.string.error_system_action_failed
@@ -239,6 +242,27 @@ class ActionExecutor(
     }
 
     /**
+     * Sends the assist intent straight to the default assistant. Sent without a package, it opens a
+     * chooser whenever several apps answer it, which is common.
+     */
+    private fun launchAssistant() {
+        val assistantPackage = defaultAssistantPackage(context)
+        if (assistantPackage == null) {
+            toast(R.string.error_no_default_assistant)
+            return
+        }
+        val intent = Intent(Intent.ACTION_ASSIST)
+            .setPackage(assistantPackage)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        try {
+            context.startActivity(intent)
+        } catch (error: android.content.ActivityNotFoundException) {
+            Log.w(TAG, "Default assistant $assistantPackage does not answer ACTION_ASSIST", error)
+            toast(R.string.error_no_default_assistant)
+        }
+    }
+
+    /**
      * Moves the volume one step and shows the system panel, like the volume keys. Android picks the
      * stream, so it changes media volume while something plays and the ringer otherwise.
      */
@@ -312,3 +336,19 @@ class ActionExecutor(
         Toast.makeText(context, messageRes, Toast.LENGTH_SHORT).show()
     }
 }
+
+// Settings keys the system writes when the user picks a digital assistant: the assist component,
+// falling back to the voice interaction service. Either names the assistant's package.
+private val ASSISTANT_SETTINGS = listOf("assistant", "voice_interaction_service")
+
+/** The package of the default digital assistant, or null when none is set or readable. */
+internal fun defaultAssistantPackage(context: Context): String? =
+    ASSISTANT_SETTINGS.firstNotNullOfOrNull { key ->
+        try {
+            Settings.Secure.getString(context.contentResolver, key)
+                ?.let(ComponentName::unflattenFromString)
+                ?.packageName
+        } catch (error: SecurityException) {
+            null
+        }
+    }

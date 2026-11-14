@@ -42,6 +42,7 @@ object UiLabels {
         KeyAction.ToggleGlyphLight.ID -> R.string.action_toggle_glyph_light
         KeyAction.ToggleNotifications.ID -> R.string.action_toggle_notifications
         KeyAction.ToggleQuickSettings.ID -> R.string.action_toggle_quick_settings
+        KeyAction.LaunchAssistant.ID -> R.string.action_launch_assistant
         KeyAction.GoHome.ID -> R.string.action_go_home
         KeyAction.GoBack.ID -> R.string.action_go_back
         KeyAction.ShowRecents.ID -> R.string.action_show_recents
@@ -64,6 +65,7 @@ object UiLabels {
         KeyAction.MediaNext,
         KeyAction.MediaPrevious,
         KeyAction.RingerCycle,
+        KeyAction.LaunchAssistant,
         KeyAction.ToggleNotifications,
         KeyAction.ToggleQuickSettings,
         KeyAction.AdjustVolume(VolumeDirection.UP),

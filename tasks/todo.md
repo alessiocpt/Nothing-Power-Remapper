@@ -306,13 +306,13 @@ state, both actions close it with `GLOBAL_ACTION_DISMISS_NOTIFICATION_SHADE`. Ot
 its own panel.
 
 **Acceptance criteria:**
-- [ ] A press opens, the next press closes, and so does a press after a manual swipe-down.
-- [ ] Toggle Quick Settings closes a shade that was opened as notifications.
-- [ ] The Foreground App does not change while the shade is open (relies on Task 4).
+- [x] A press opens, the next press closes, and so does a press after a manual swipe-down.
+- [x] Toggle Quick Settings closes a shade that was opened as notifications.
+- [x] The Foreground App does not change while the shade is open (relies on Task 4).
 
 **Verification:**
-- [ ] Unit test for the shade-open helper; `./scripts/verify.sh`
-- [ ] Manual check on the phone, including on the lock screen
+- [x] Unit test for the shade-open helper; `./scripts/verify.sh`
+- [x] Manual check on the phone, including on the lock screen
 
 **Dependencies:** Checkpoint C
 
@@ -324,9 +324,10 @@ its own panel.
 
 ## Task 13: Launch Assistant
 
-**Description:** Add an action that opens the default digital assistant with `Intent.ACTION_VOICE_COMMAND`,
-falling back to `ACTION_ASSIST`. The picker shows a hint when `RoleManager` reports no app holds
-`ROLE_ASSISTANT`, and when pressed with none set, the action shows a toast.
+**Description:** Add an action that sends `ACTION_ASSIST` to the default assistant's package, read from
+`Settings.Secure` (`assistant`, then `voice_interaction_service`). Sent without a package it opens a
+chooser, since several apps answer it; `VOICE_COMMAND` is not answered by Claude. The picker shows a
+hint when no assistant is set, and a press with none set shows a toast.
 
 **Acceptance criteria:**
 - [ ] With Claude as the default assistant, the action opens Claude.

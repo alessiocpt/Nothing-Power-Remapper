@@ -11,6 +11,7 @@ class KeyActionTest {
     @Test
     fun systemNavigationActionsRoundTrip() {
         for (action in listOf(
+            KeyAction.LaunchAssistant,
             KeyAction.ToggleNotifications,
             KeyAction.ToggleQuickSettings,
             KeyAction.GoHome,

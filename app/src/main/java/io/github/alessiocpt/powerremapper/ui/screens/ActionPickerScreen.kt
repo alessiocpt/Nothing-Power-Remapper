@@ -39,6 +39,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import io.github.alessiocpt.powerremapper.R
 import io.github.alessiocpt.powerremapper.actions.KeyAction
+import io.github.alessiocpt.powerremapper.actions.defaultAssistantPackage
 import io.github.alessiocpt.powerremapper.core.KeyGesture
 import io.github.alessiocpt.powerremapper.glyph.GlyphDevice
 import io.github.alessiocpt.powerremapper.settings.GestureSlot
@@ -129,6 +130,12 @@ fun ActionPickerScreen(
     } else {
         emptySet()
     }
+    // Still selectable, since an assistant can be chosen later, but say why it would do nothing.
+    val assistantHint = if (remember { defaultAssistantPackage(context) } == null) {
+        stringResource(R.string.picker_no_default_assistant)
+    } else {
+        null
+    }
     val matchingApps = filterApps(apps, query)
 
     LazyColumn(
@@ -177,6 +184,7 @@ fun ActionPickerScreen(
                 BuiltInActionsCard(
                     actions = matchingActions,
                     unavailableActions = unavailableActions,
+                    hints = assistantHint?.let { mapOf<KeyAction, String>(KeyAction.LaunchAssistant to it) }.orEmpty(),
                     onSelect = ::save
                 )
                 Spacer(modifier = Modifier.height(SECTION_GAP))
@@ -258,6 +266,7 @@ internal fun SearchField(query: String, onQueryChange: (String) -> Unit) {
 private fun BuiltInActionsCard(
     actions: List<KeyAction>,
     unavailableActions: Set<KeyAction>,
+    hints: Map<KeyAction, String>,
     onSelect: (KeyAction) -> Unit
 ) {
     NothingCard(modifier = Modifier.fillMaxWidth()) {
@@ -272,7 +281,7 @@ private fun BuiltInActionsCard(
                     caption = if (unavailable) {
                         stringResource(R.string.picker_unavailable_in_camera)
                     } else {
-                        null
+                        hints[action]
                     },
                     enabled = !unavailable
                 )

@@ -21,6 +21,11 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent>
 
+        <!-- The default assistant must be visible for Launch Assistant to send it the assist intent. -->
+        <intent>
+            <action android:name="android.intent.action.ASSIST" />
+        </intent>
+
         <!-- Camera apps must be visible so a camera app's Profile can grey out Flashlight, which
              Android blocks while another app holds the camera. -->
         <intent>
