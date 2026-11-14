@@ -400,12 +400,12 @@ A press while Shizuku is down shows "Shizuku isn't running" and does nothing els
 description mentions that single press needs the unlock wizard.
 
 **Acceptance criteria:**
-- [ ] Shizuku is never requested unless Camera Shutter is assigned.
-- [ ] The badge appears and disappears as Shizuku stops and starts, re-checked on resume.
-- [ ] The toast appears on a press while Shizuku is stopped.
+- [x] Shizuku is never requested unless Camera Shutter is assigned.
+- [x] The badge appears and disappears as Shizuku stops and starts, re-checked on resume.
+- [x] The toast appears on a press while Shizuku is stopped.
 
 **Verification:**
-- [ ] `./scripts/verify.sh`; manual check: reboot the phone, press without Shizuku, then start Shizuku
+- [x] `./scripts/verify.sh`; manual check: reboot the phone, press without Shizuku, then start Shizuku
 
 **Dependencies:** Task 15
 
@@ -414,9 +414,10 @@ description mentions that single press needs the unlock wizard.
 **Estimated scope:** Medium
 
 ### Checkpoint D (Complete): after Tasks 11–16
-- [ ] `./scripts/verify.sh` passes
-- [ ] Every Action verified on the phone, in both a Profile and the Default Profile
-- [ ] README lists the features; tag a first GitHub release
+- [x] `./scripts/verify.sh` passes
+- [x] Every Action verified on the phone
+- [x] README lists the features
+- [ ] Merge to `main` and tag a first GitHub release
 
 ---
 

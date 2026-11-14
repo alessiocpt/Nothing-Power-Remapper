@@ -16,17 +16,26 @@ THE-TECH-CHANGER. It is distributed on GitHub only. See
 | Four gestures, haptics, "only when unlocked", Key Test, Diagnostics | Inherited from EssentialKeyTools, working |
 | Optional single-press unlock wizard (manual or Shizuku) | Inherited, working |
 | Per-app **Profiles** with Inherit / Isolated **Fallback** | Working |
-| Home, Back, Recents, Power menu, Split screen, Adjust Volume | Planned |
-| Toggle Notifications / Toggle Quick Settings | Planned |
-| Launch Assistant, Launch Camera (photo / video), Camera Shutter | Planned |
+| Home, Back, Recent apps, Power menu, Volume up / down | Working |
+| Toggle Notifications / Toggle Quick Settings | Working |
+| Launch Assistant (opens the default assistant, e.g. Claude) | Working |
+| Launch Camera (photo, also over the lock screen; video) | Working |
+| Camera Shutter (camera key through [Shizuku](https://shizuku.rikka.app/)) | Working |
+| Cycling Nothing Camera zoom presets, front camera | Later: needs UI automation |
+
+Not offered, because Nothing OS does not allow it: Split screen (no system action), opening
+Nothing Camera on the front camera (its selfie shortcut is private), and Flashlight inside a camera
+app (Android blocks the torch while a camera is in use).
 
 The plan is in [tasks/plan.md](tasks/plan.md), and the vocabulary is in [CONTEXT.md](CONTEXT.md).
 
 ## Actions available today
 
-Launch an app, toggle the flashlight, take a screenshot, lock the screen, play/pause, next or
+Launch an app, launch the assistant, open the camera (photo or video), press a camera app's
+shutter, toggle notifications or Quick Settings, toggle the flashlight, take a screenshot, lock the
+screen, go home, back or to recent apps, open the power menu, change the volume, play/pause, next or
 previous track, cycle the ringer (ring → vibrate → silent), and toggle the Glyph light on Glyph
-Matrix hardware.
+Matrix hardware. Each app can have its own **Profile** that changes any of these per gesture.
 
 Double, triple and long press work as soon as the accessibility service is on. Nothing OS reserves
 the single press for Essential Space and Recorder. The built-in unlock wizard can disable those
