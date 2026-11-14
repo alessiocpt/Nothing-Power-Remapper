@@ -154,12 +154,12 @@ following `KeyAction.fromPersisted`. Expose `profileSet: Flow<ProfileSet>` and w
 `SettingsRepository`: upsert profile, delete profile, set slot, set fallback.
 
 **Acceptance criteria:**
-- [ ] A round trip preserves every slot state, the payload (Launch App's package) and the Fallback.
-- [ ] Corrupt JSON decodes to "no app Profiles", not a crash.
-- [ ] The Default Profile still reads and writes the existing keys.
+- [x] A round trip preserves every slot state, the payload (Launch App's package) and the Fallback.
+- [x] Corrupt JSON decodes to "no app Profiles", not a crash.
+- [x] The Default Profile still reads and writes the existing keys.
 
 **Verification:**
-- [ ] `./gradlew testDebugUnitTest --tests '*ProfileSerialization*' --tests '*SettingsRepository*'`
+- [x] `./gradlew testDebugUnitTest --tests '*ProfileSerialization*' --tests '*SettingsRepository*'`
 
 **Dependencies:** Task 5
 

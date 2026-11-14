@@ -2,6 +2,7 @@ package io.github.alessiocpt.powerremapper.settings
 
 import android.content.Context
 import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
@@ -28,7 +29,8 @@ private val Context.settingsDataStore: DataStore<Preferences> by preferencesData
 
 /**
  * Persists the app's configuration: onboarding completion and progress, the learned Essential Key
- * scanCode, the gesture -> action mapping, the haptic feedback settings, whether actions run only
+ * scanCode, the Default Profile's gesture -> action mapping and the app Profiles, the haptic
+ * feedback settings, whether actions run only
  * on an unlocked device, and the theme style. Exposes reactive [Flow]s for observers (service, UI)
  * and suspend writers.
  *
@@ -49,6 +51,7 @@ class SettingsRepository internal constructor(
     private val customPulseMillisKey = intPreferencesKey("custom_haptic_pulse_millis")
     private val customFrequencyHzKey = intPreferencesKey("custom_haptic_frequency_hz")
     private val customAmplitudePercentKey = intPreferencesKey("custom_haptic_amplitude_percent")
+    private val appProfilesKey = stringPreferencesKey("app_profiles")
 
     val onboardingState: Flow<OnboardingState> = dataStore.data.map { preferences ->
         OnboardingState(
@@ -65,6 +68,11 @@ class SettingsRepository internal constructor(
         SettingsSerialization.decodeMap { keyName ->
             preferences[stringPreferencesKey(keyName)]
         }
+    }
+
+    /** The Default Profile, read from its own keys, together with every app Profile. */
+    val profileSet: Flow<ProfileSet> = dataStore.data.map { preferences ->
+        readProfileSet(preferences)
     }
 
     val hapticStrength: Flow<HapticStrength> = dataStore.data.map { preferences ->
@@ -161,6 +169,57 @@ class SettingsRepository internal constructor(
             } else {
                 preferences[payloadKey] = payload
             }
+        }
+    }
+
+    /** Adds [profile], replacing any Profile already kept for the same app. */
+    suspend fun upsertProfile(profile: Profile) {
+        editProfiles { profiles -> profiles.withProfile(profile) }
+    }
+
+    suspend fun deleteProfile(packageName: String) {
+        editProfiles { profiles -> profiles.withoutProfile(packageName) }
+    }
+
+    /** Changes one Gesture of an existing Profile; does nothing if the app has no Profile. */
+    suspend fun setProfileSlot(packageName: String, gesture: KeyGesture, slot: GestureSlot) {
+        editProfile(packageName) { profile -> profile.withSlot(gesture, slot) }
+    }
+
+    /** Changes the Fallback of an existing Profile; does nothing if the app has no Profile. */
+    suspend fun setProfileFallback(packageName: String, fallback: Fallback) {
+        editProfile(packageName) { profile -> profile.withFallback(fallback) }
+    }
+
+    private suspend fun editProfile(packageName: String, transform: (Profile) -> Profile) {
+        editProfiles { profiles ->
+            val profile = profiles.profileFor(packageName) ?: return@editProfiles profiles
+            profiles.withProfile(transform(profile))
+        }
+    }
+
+    // Reads and writes inside one edit so concurrent changes to different Profiles cannot overwrite
+    // each other. Only the app Profiles are written back: the Default Profile keeps its own keys.
+    private suspend fun editProfiles(transform: (ProfileSet) -> ProfileSet) {
+        dataStore.edit { preferences ->
+            val updated = transform(readProfileSet(preferences))
+            writeAppProfiles(preferences, updated.appProfiles)
+        }
+    }
+
+    private fun readProfileSet(preferences: Preferences): ProfileSet {
+        val defaultProfile = SettingsSerialization.decodeMap { keyName ->
+            preferences[stringPreferencesKey(keyName)]
+        }
+        return ProfileSerialization.decodeProfiles(preferences[appProfilesKey])
+            .fold(ProfileSet(defaultProfile)) { profiles, profile -> profiles.withProfile(profile) }
+    }
+
+    private fun writeAppProfiles(preferences: MutablePreferences, profiles: List<Profile>) {
+        if (profiles.isEmpty()) {
+            preferences.remove(appProfilesKey)
+        } else {
+            preferences[appProfilesKey] = ProfileSerialization.encodeProfiles(profiles)
         }
     }
 

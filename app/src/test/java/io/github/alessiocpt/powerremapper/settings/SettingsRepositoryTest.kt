@@ -1,6 +1,8 @@
 package io.github.alessiocpt.powerremapper.settings
 
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import io.github.alessiocpt.powerremapper.actions.KeyAction
+import io.github.alessiocpt.powerremapper.core.KeyGesture
 import java.io.File
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -9,6 +11,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -158,5 +161,79 @@ class SettingsRepositoryTest {
         } finally {
             dataStoreScope.cancel()
         }
+    }
+
+    @Test
+    fun profileSetCombinesTheDefaultProfileWithPersistedAppProfiles() = runBlocking {
+        val dataStoreScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+        val dataStoreFile = File(temporaryFolder.root, "settings.preferences_pb")
+        val repository = SettingsRepository(
+            PreferenceDataStoreFactory.create(
+                scope = dataStoreScope,
+                produceFile = { dataStoreFile }
+            )
+        )
+        val camera = "com.nothing.camera"
+
+        try {
+            assertNothingConfigured(repository.profileSet.first())
+
+            repository.setActionFor(KeyGesture.DOUBLE_PRESS, KeyAction.ToggleFlashlight)
+            repository.upsertProfile(Profile.newFor(camera))
+            repository.setProfileSlot(
+                camera,
+                KeyGesture.SINGLE_PRESS,
+                GestureSlot.Assigned(KeyAction.MediaPlayPause)
+            )
+            repository.setProfileFallback(camera, Fallback.ISOLATED)
+
+            val profiles = repository.profileSet.first()
+            assertEquals(KeyAction.ToggleFlashlight, profiles.resolve(null, KeyGesture.DOUBLE_PRESS))
+            assertEquals(KeyAction.MediaPlayPause, profiles.resolve(camera, KeyGesture.SINGLE_PRESS))
+            assertEquals(KeyAction.DoNothing, profiles.resolve(camera, KeyGesture.DOUBLE_PRESS))
+
+            repository.setProfileSlot(camera, KeyGesture.SINGLE_PRESS, GestureSlot.Unassigned)
+            assertEquals(
+                GestureSlot.Unassigned,
+                repository.profileSet.first().profileFor(camera)?.slotFor(KeyGesture.SINGLE_PRESS)
+            )
+
+            repository.deleteProfile(camera)
+            assertNull(repository.profileSet.first().profileFor(camera))
+        } finally {
+            dataStoreScope.cancel()
+        }
+    }
+
+    @Test
+    fun editingAProfileThatDoesNotExistChangesNothing() = runBlocking {
+        val dataStoreScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+        val dataStoreFile = File(temporaryFolder.root, "settings.preferences_pb")
+        val repository = SettingsRepository(
+            PreferenceDataStoreFactory.create(
+                scope = dataStoreScope,
+                produceFile = { dataStoreFile }
+            )
+        )
+
+        try {
+            repository.setProfileFallback("com.example.missing", Fallback.ISOLATED)
+            repository.setProfileSlot(
+                "com.example.missing",
+                KeyGesture.LONG_PRESS,
+                GestureSlot.Assigned(KeyAction.LockScreen)
+            )
+
+            assertNothingConfigured(repository.profileSet.first())
+        } finally {
+            dataStoreScope.cancel()
+        }
+    }
+
+    // The Default Profile reads back as an explicit Do Nothing per gesture, which behaves like an
+    // empty map without being equal to one, so this checks behaviour rather than equality.
+    private fun assertNothingConfigured(profiles: ProfileSet) {
+        assertEquals(emptyList<Profile>(), profiles.appProfiles)
+        assertEquals(emptySet<KeyGesture>(), profiles.activeGestures(null))
     }
 }
