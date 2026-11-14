@@ -208,13 +208,13 @@ excludes apps that already have a Profile. Delete has a confirmation. Apps that 
 installed show "not installed" and are kept.
 
 **Acceptance criteria:**
-- [ ] Add, delete and list all work, and the list survives an app restart.
-- [ ] An app with a Profile cannot be added twice.
-- [ ] An uninstalled app's Profile shows "not installed".
+- [x] Add, delete and list all work, and the list survives an app restart.
+- [x] An app with a Profile cannot be added twice.
+- [x] An uninstalled app's Profile shows "not installed".
 
 **Verification:**
-- [ ] `./scripts/verify.sh` passes
-- [ ] Manual check on the phone
+- [x] `./scripts/verify.sh` passes
+- [x] Manual check on the phone
 
 **Dependencies:** Checkpoint B
 
@@ -233,13 +233,13 @@ Default)" or "Does nothing (Isolated)"). The Home screen's gesture card keeps ed
 Profile.
 
 **Acceptance criteria:**
-- [ ] All three slot states can be set and cleared.
-- [ ] The greyed preview updates immediately when the Fallback or the Default Profile changes.
-- [ ] The action picker is shared, not copied.
+- [x] All three slot states can be set and cleared.
+- [x] The greyed preview updates immediately when the Fallback or the Default Profile changes.
+- [x] The action picker is shared, not copied.
 
 **Verification:**
-- [ ] `./scripts/verify.sh` passes
-- [ ] Manual check: build a Camera Profile from the UI only, then test it in Nothing Camera
+- [x] `./scripts/verify.sh` passes
+- [x] Manual check: build a Camera Profile from the UI only, then test it in Nothing Camera
 
 **Dependencies:** Task 8
 
@@ -256,11 +256,11 @@ and `PRIVACY.md`. They must now say the app reads which app is in the foreground
 only, never screen content, never stored or sent) in order to pick a Profile.
 
 **Acceptance criteria:**
-- [ ] All three texts mention Foreground App reading and say what is not read.
-- [ ] The `AccessibilityDisclosureScreenTest` instrumented test still compiles; any text assertions are updated.
+- [x] All three texts mention Foreground App reading and say what is not read.
+- [x] The `AccessibilityDisclosureScreenTest` instrumented test still compiles; any text assertions are updated.
 
 **Verification:**
-- [ ] `./scripts/verify.sh` passes
+- [x] `./scripts/verify.sh` passes
 
 **Dependencies:** Task 4
 
@@ -269,8 +269,8 @@ only, never screen content, never stored or sent) in order to pick a Profile.
 **Estimated scope:** Small
 
 ### Checkpoint C: after Tasks 8–10
-- [ ] Profiles can be managed entirely from the UI on the phone
-- [ ] Review with the human
+- [x] Profiles can be managed entirely from the UI on the phone
+- [x] Review with the human
 
 ---
 

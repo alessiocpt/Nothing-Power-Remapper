@@ -7,7 +7,7 @@
 
     <!-- Accessibility service -->
     <string name="accessibility_service_label">Essential Key detection</string>
-    <string name="accessibility_service_description">Detects Essential Key presses and runs the shortcuts you assigned. It does not read screen content or text fields.</string>
+    <string name="accessibility_service_description">Detects Essential Key presses and runs the shortcuts you assigned, using the profile of the app you are in. It reads which app is open (its name only) but not screen content or text fields.</string>
 
     <!-- Home navigation -->
     <string name="action_open_accessibility_settings">Enable service</string>
@@ -99,8 +99,8 @@
 
     <!-- Accessibility enable flow -->
     <string name="a11y_disclosure_title">Before using the accessibility service</string>
-    <string name="a11y_disclosure_body">To let the Essential Key run shortcuts while this app is not open, Nothing Poweruser Remapper needs Android’s accessibility service (AccessibilityService API).\n\nWhen enabled, the app receives which hardware key was pressed or released and when the event happened. It uses this information only to confirm that the key is the Essential Key, recognize a single, double, triple, or long press, and run the shortcut you selected.\n\nKey events are processed immediately on your device and are not stored, uploaded, or shared. Only the Essential Key identifier you confirm in Key Setup is stored on your device. The app does not read screen content, text fields, or text you type.\n\nThe app uses accessibility to take a screenshot or lock the screen only if you assigned that action to a shortcut. It does not choose or run other actions on its own.</string>
-    <string name="a11y_disclosure_question">Do you agree to Nothing Poweruser Remapper using the accessibility service to detect the Essential Key and run the shortcuts you set?</string>
+    <string name="a11y_disclosure_body">To let the Essential Key run shortcuts while this app is not open, Nothing Poweruser Remapper needs Android’s accessibility service (AccessibilityService API).\n\nWhen enabled, the app receives which hardware key was pressed or released and when the event happened. It uses this information only to confirm that the key is the Essential Key, recognize a single, double, triple, or long press, and run the shortcut you selected.\n\nThe app also receives the package name of the app in front whenever you switch apps, to pick that app\'s profile. It does not read what the app shows. The name is kept in memory only while the service runs, and is not stored, uploaded, or shared.\n\nKey events are processed immediately on your device and are not stored, uploaded, or shared. Only the Essential Key identifier you confirm in Key Setup is stored on your device. The app does not read screen content, text fields, or text you type.\n\nThe app uses accessibility to take a screenshot or lock the screen only if you assigned that action to a shortcut. It does not choose or run other actions on its own.</string>
+    <string name="a11y_disclosure_question">Do you agree to Nothing Poweruser Remapper using the accessibility service to detect the Essential Key, see which app is open, and run the shortcuts you set?</string>
     <string name="a11y_disclosure_use_accessibility">Agree: use accessibility service</string>
     <string name="a11y_disclosure_continue_without_accessibility">Decline: don\'t use accessibility service</string>
     <string name="a11y_disclosure_back_declined">Treated as declined. The accessibility service was not enabled.</string>

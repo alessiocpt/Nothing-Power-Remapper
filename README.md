@@ -15,7 +15,7 @@ THE-TECH-CHANGER. It is distributed on GitHub only. See
 |------|-------|
 | Four gestures, haptics, "only when unlocked", Key Test, Diagnostics | Inherited from EssentialKeyTools, working |
 | Optional single-press unlock wizard (manual or Shizuku) | Inherited, working |
-| Per-app **Profiles** with Inherit / Isolated **Fallback** | Planned |
+| Per-app **Profiles** with Inherit / Isolated **Fallback** | Working |
 | Home, Back, Recents, Power menu, Split screen, Adjust Volume | Planned |
 | Toggle Notifications / Toggle Quick Settings | Planned |
 | Launch Assistant, Launch Camera (photo / video / selfie), Camera Shutter | Planned |
@@ -51,6 +51,7 @@ Requirements: Android 15 or newer, and a Nothing phone with an Essential Key. Th
 
 - The app processes hardware-key events on the device. It never stores, uploads or shares them.
 - It saves only the Essential Key identifier, on the device.
+- To pick an app's profile, it reads which app is in front (package name only), kept in memory only.
 - It does not read screen content, text fields or anything you type.
 - There are no accounts, analytics, ads or tracking.
 
@@ -69,7 +70,8 @@ own single-press handling, which is why single press needs the separate unlock f
 ### Permissions and network access
 
 - **Accessibility service:** observes Essential Key press and release events, recognises the
-  gesture and runs the mapped action.
+  gesture and runs the mapped action. It also receives window-state changes, reading only the
+  package and class name, to know which app's profile applies.
 - **`INTERNET`:** used only when you press **Check for updates**, to read this repository's
   GitHub releases.
 - **`VIBRATE`:** haptic feedback, when you turn it on.

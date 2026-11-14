@@ -1,6 +1,6 @@
 # Privacy Policy — Nothing Poweruser Remapper
 
-_Last updated: 13 November 2026_
+_Last updated: 14 November 2026_
 
 Nothing Poweruser Remapper ("the app") is a free, open-source Android app that remaps the Nothing Phone
 Essential Key. This policy explains what the app does — and does not do — with your data.
@@ -19,7 +19,8 @@ from it unless you choose to share it.
 ## Data stored on your device
 
 Your onboarding progress and settings — which action each gesture (single, double, triple, or long
-press) is mapped to, your haptic feedback choices including any custom vibration pattern, whether
+press) is mapped to, the per-app profiles you create (each names the app's package and the actions
+you chose for it), your haptic feedback choices including any custom vibration pattern, whether
 actions run only when the device is unlocked, your theme choice, and the learned scan code of your
 key — are stored locally on your device using Android's DataStore. This data never leaves your device and is removed when you uninstall the app.
 
@@ -64,9 +65,20 @@ service invokes the corresponding Android accessibility system action only after
 assigned gesture. The service:
 
 - does not read screen content or typed text;
+- reads only the package and window class name of the app in front, to pick that app's profile (see
+  below);
 - does not keep a history or log of hardware key events;
 - stores only the scan code you explicitly confirm in Key Setup, as described above;
 - does not transmit or share hardware key event data.
+
+### Which app is in front
+
+To apply per-app profiles, the service is notified whenever the window in front changes. From each
+notification it reads only the app's package name (for example `com.nothing.camera`) and the window's
+class name, which it uses to tell an app's own screen from a dialog, the notification shade or the
+keyboard. It never reads what the window shows. The current app, and on the Key Test screen the last
+five, are kept in memory only while the service runs. They are not written to storage, not included
+in crash reports, and never transmitted.
 
 If you turn on **Run actions only when unlocked**, the service also asks Android whether the lock
 screen is showing when a press or gesture would otherwise do something. The answer is used on the
