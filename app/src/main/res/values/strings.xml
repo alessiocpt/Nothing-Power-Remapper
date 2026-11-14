@@ -12,6 +12,24 @@
     <!-- Home navigation -->
     <string name="action_open_accessibility_settings">Enable service</string>
     <string name="nav_home">Home</string>
+    <string name="nav_profiles">Profiles</string>
+
+    <!-- Profiles -->
+    <string name="profiles_title">PROFILES</string>
+    <string name="profiles_default_title">Default profile</string>
+    <string name="profiles_default_caption">Applies in every app without its own profile, and on the lock screen. Edit it on Home.</string>
+    <string name="profiles_section_apps">App profiles</string>
+    <string name="profiles_empty">No app profiles yet. Add one to give an app its own gestures.</string>
+    <string name="profiles_add">Add profile</string>
+    <string name="profiles_add_title">CHOOSE APP</string>
+    <string name="profiles_fallback_inherit">Inherit: unassigned gestures use the Default profile</string>
+    <string name="profiles_fallback_isolated">Isolated: unassigned gestures do nothing</string>
+    <string name="profiles_not_installed">Not installed · %1$s</string>
+    <string name="profiles_delete">Delete</string>
+    <string name="profiles_delete_title">Delete the %1$s profile?</string>
+    <string name="profiles_delete_body">The app goes back to using the Default profile.</string>
+    <string name="profiles_delete_confirm">Delete</string>
+    <string name="profiles_delete_cancel">Cancel</string>
     <string name="action_open_settings">Settings</string>
     <string name="action_key_setup">Key setup</string>
     <string name="action_key_test">Key test</string>

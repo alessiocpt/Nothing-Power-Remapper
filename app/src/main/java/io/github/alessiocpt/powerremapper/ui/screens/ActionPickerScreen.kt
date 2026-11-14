@@ -168,7 +168,7 @@ private fun filterBuiltInActions(
 }
 
 /** Case-insensitive substring match on either the app label or its package name. */
-private fun filterApps(apps: List<LaunchableApp>, query: String): List<LaunchableApp> {
+internal fun filterApps(apps: List<LaunchableApp>, query: String): List<LaunchableApp> {
     if (query.isBlank()) return apps
     val needle = query.trim().lowercase()
     return apps.filter { app ->
@@ -177,7 +177,7 @@ private fun filterApps(apps: List<LaunchableApp>, query: String): List<Launchabl
 }
 
 @Composable
-private fun SearchField(query: String, onQueryChange: (String) -> Unit) {
+internal fun SearchField(query: String, onQueryChange: (String) -> Unit) {
     OutlinedTextField(
         value = query,
         onValueChange = onQueryChange,
@@ -236,7 +236,7 @@ private fun ActionTextRow(label: String, onClick: () -> Unit) {
 }
 
 @Composable
-private fun AppRow(app: LaunchableApp, onClick: () -> Unit) {
+internal fun AppRow(app: LaunchableApp, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()

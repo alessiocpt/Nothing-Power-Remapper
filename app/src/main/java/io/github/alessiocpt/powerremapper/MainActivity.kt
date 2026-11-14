@@ -43,6 +43,8 @@ import io.github.alessiocpt.powerremapper.ui.screens.DiagnosticsScreen
 import io.github.alessiocpt.powerremapper.ui.screens.HapticPatternScreen
 import io.github.alessiocpt.powerremapper.ui.screens.HomeScreen
 import io.github.alessiocpt.powerremapper.ui.screens.KeySetupScreen
+import io.github.alessiocpt.powerremapper.ui.screens.ProfileAppPickerScreen
+import io.github.alessiocpt.powerremapper.ui.screens.ProfilesScreen
 import io.github.alessiocpt.powerremapper.ui.screens.KeyTestScreen
 import io.github.alessiocpt.powerremapper.ui.screens.OnboardingScreen
 import io.github.alessiocpt.powerremapper.ui.screens.SettingsScreen
@@ -59,13 +61,15 @@ import kotlinx.coroutines.runBlocking
  */
 private enum class Screen(val tab: NavBarItem? = null) {
     HOME(NavBarItem(R.string.nav_home, R.drawable.ic_nav_home)),
+    PROFILES(NavBarItem(R.string.nav_profiles, R.drawable.ic_nav_profiles)),
     KEY_SETUP(NavBarItem(R.string.action_key_setup, R.drawable.ic_nav_setup)),
     KEY_TEST(NavBarItem(R.string.action_key_test, R.drawable.ic_nav_test)),
     SETTINGS(NavBarItem(R.string.action_open_settings, R.drawable.ic_nav_settings)),
     DIAGNOSTICS,
     UNLOCK_WIZARD,
     HAPTIC_PATTERN,
-    ACTION_PICKER
+    ACTION_PICKER,
+    PROFILE_APP_PICKER
 }
 
 private val TAB_SCREENS = Screen.entries.filter { it.tab != null }
@@ -223,6 +227,19 @@ private fun AppNavigation() {
                     Screen.HOME -> HomeScreen(
                         onEditGesture = ::editGesture,
                         onUnlockWizard = { navigateTo(Screen.UNLOCK_WIZARD) },
+                        systemBarsPadding = systemBarsPadding
+                    )
+
+                    Screen.PROFILES -> ProfilesScreen(
+                        onEditDefaultProfile = { selectTab(Screen.HOME) },
+                        // The Profile editor arrives in Task 9.
+                        onEditProfile = {},
+                        onAddProfile = { navigateTo(Screen.PROFILE_APP_PICKER) },
+                        systemBarsPadding = systemBarsPadding
+                    )
+
+                    Screen.PROFILE_APP_PICKER -> ProfileAppPickerScreen(
+                        onProfileCreated = { navigateBack() },
                         systemBarsPadding = systemBarsPadding
                     )
 
