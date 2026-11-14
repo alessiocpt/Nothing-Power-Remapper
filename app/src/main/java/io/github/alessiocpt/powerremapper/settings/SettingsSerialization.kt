@@ -23,12 +23,12 @@ object SettingsSerialization {
 
     /**
      * Rebuilds the map from a lookup of persisted string values (e.g. DataStore preferences).
-     * [readValue] returns null for absent keys, which resolves to [KeyAction.None].
+     * [readValue] returns null for absent keys, which resolves to [KeyAction.DoNothing].
      */
     fun decodeMap(readValue: (String) -> String?): GestureActionMap {
         var map = GestureActionMap.EMPTY
         for (gesture in KeyGesture.entries) {
-            val id = readValue(actionIdKeyName(gesture)) ?: KeyAction.None.id
+            val id = readValue(actionIdKeyName(gesture)) ?: KeyAction.DoNothing.id
             val payload = readValue(actionPayloadKeyName(gesture))
             map = map.with(gesture, KeyAction.fromPersisted(id, payload))
         }

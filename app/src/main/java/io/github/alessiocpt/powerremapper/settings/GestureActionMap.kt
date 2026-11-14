@@ -5,7 +5,7 @@ import io.github.alessiocpt.powerremapper.core.KeyGesture
 
 /**
  * The full gesture -> action configuration: one [KeyAction] per [KeyGesture]. Missing entries
- * resolve to [KeyAction.None] so callers never deal with nullability.
+ * resolve to [KeyAction.DoNothing] so callers never deal with nullability.
  *
  * This is a plain immutable value with no Android or DataStore dependency, so the persistence
  * mapping in [SettingsSerialization] can be unit-tested in isolation.
@@ -14,7 +14,7 @@ data class GestureActionMap(
     private val actionsByGesture: Map<KeyGesture, KeyAction> = emptyMap()
 ) {
     fun actionFor(gesture: KeyGesture): KeyAction =
-        actionsByGesture[gesture] ?: KeyAction.None
+        actionsByGesture[gesture] ?: KeyAction.DoNothing
 
     fun with(gesture: KeyGesture, action: KeyAction): GestureActionMap =
         GestureActionMap(actionsByGesture + (gesture to action))
@@ -23,10 +23,10 @@ data class GestureActionMap(
     fun isMapped(action: KeyAction): Boolean =
         KeyGesture.entries.any { gesture -> actionFor(gesture) == action }
 
-    /** Gestures whose mapped action is anything other than [KeyAction.None]. */
+    /** Gestures whose mapped action is anything other than [KeyAction.DoNothing]. */
     fun activeGestures(): Set<KeyGesture> =
         KeyGesture.entries
-            .filter { gesture -> actionFor(gesture) != KeyAction.None }
+            .filter { gesture -> actionFor(gesture) != KeyAction.DoNothing }
             .toSet()
 
     companion object {

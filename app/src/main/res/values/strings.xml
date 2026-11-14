@@ -116,7 +116,7 @@
     <string name="picker_saved">Action saved</string>
 
     <!-- Action names -->
-    <string name="action_none">None</string>
+    <string name="action_none">Do nothing</string>
     <string name="action_launch_app">Launch app</string>
     <string name="action_toggle_flashlight">Toggle flashlight</string>
     <string name="action_take_screenshot">Take screenshot</string>
@@ -130,7 +130,7 @@
     <!-- Home: gestures + unlock -->
     <string name="section_gestures">Gestures</string>
     <string name="section_unlock">Single-press unlock</string>
-    <string name="action_none_caption">NONE</string>
+    <string name="action_none_caption">DO NOTHING</string>
     <string name="home_locked_by_nothing">LOCKED BY NOTHING OS</string>
     <string name="action_open_unlock_wizard">Unlock wizard</string>
     <string name="unlock_status_freed">SINGLE PRESS — FREED</string>

@@ -374,7 +374,7 @@ private fun GestureRow(
 
 @Composable
 private fun ActionLabel(action: KeyAction, context: Context) {
-    if (action == KeyAction.None) {
+    if (action == KeyAction.DoNothing) {
         Text(
             text = stringResource(R.string.action_none_caption),
             style = MaterialTheme.typography.labelLarge,

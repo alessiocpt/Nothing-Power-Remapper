@@ -210,7 +210,7 @@ class EssentialKeyDetectionService : AccessibilityService() {
         suppressNextClassifiedAction = false
         if (!actionSuppressed && !ignoredWhileLocked()) {
             val action = gestureActionMap.actionFor(gesture)
-            if (hapticsOnActionOnly && action != KeyAction.None) {
+            if (hapticsOnActionOnly && action != KeyAction.DoNothing) {
                 keyHaptics.perform(hapticStrength, customHapticPattern)
             }
             actionExecutor.execute(action)

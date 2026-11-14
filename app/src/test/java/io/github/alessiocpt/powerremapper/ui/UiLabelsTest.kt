@@ -14,11 +14,11 @@ class UiLabelsTest {
     @Test
     fun everyOfferedActionHasItsOwnLabel() {
         val actionsNeedingLabel =
-            UiLabels.builtInActions.filter { action -> action != KeyAction.None }
+            UiLabels.builtInActions.filter { action -> action != KeyAction.DoNothing }
 
         for (action in actionsNeedingLabel) {
             // builtInActionLabelRes falls back to action_none for ids it does not know, which would
-            // render a second "None" row in the picker instead of failing loudly.
+            // render a second "Do nothing" row in the picker instead of failing loudly.
             assertNotEquals(
                 "${action.id} has no label of its own",
                 R.string.action_none,

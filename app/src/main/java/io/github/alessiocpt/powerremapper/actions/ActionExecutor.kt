@@ -46,7 +46,7 @@ class ActionExecutor(
 
     fun execute(action: KeyAction) {
         when (action) {
-            is KeyAction.None -> Unit
+            is KeyAction.DoNothing -> Unit
             is KeyAction.LaunchApp -> launchApp(action.packageName)
             is KeyAction.ToggleFlashlight -> toggleFlashlight()
             is KeyAction.TakeScreenshot -> performGlobalAction(

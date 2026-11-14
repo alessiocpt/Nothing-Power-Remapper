@@ -19,7 +19,7 @@ class SettingsSerializationTest {
         val map = SettingsSerialization.decodeMap { null }
 
         for (gesture in KeyGesture.entries) {
-            assertEquals(KeyAction.None, map.actionFor(gesture))
+            assertEquals(KeyAction.DoNothing, map.actionFor(gesture))
         }
     }
 
@@ -77,7 +77,7 @@ class SettingsSerializationTest {
             storeOf(idKey to KeyAction.LaunchApp.ID)
         )
 
-        assertEquals(KeyAction.None, map.actionFor(KeyGesture.LONG_PRESS))
+        assertEquals(KeyAction.DoNothing, map.actionFor(KeyGesture.LONG_PRESS))
     }
 
     @Test
@@ -87,7 +87,7 @@ class SettingsSerializationTest {
             storeOf(idKey to "removed_action_from_old_version")
         )
 
-        assertEquals(KeyAction.None, map.actionFor(KeyGesture.TRIPLE_PRESS))
+        assertEquals(KeyAction.DoNothing, map.actionFor(KeyGesture.TRIPLE_PRESS))
     }
 
     @Test

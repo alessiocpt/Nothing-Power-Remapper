@@ -22,7 +22,7 @@ object UiLabels {
      * a launch action shows the resolved app name, which is not a static resource.
      */
     fun builtInActionLabelRes(actionId: String): Int = when (actionId) {
-        KeyAction.None.ID -> R.string.action_none
+        KeyAction.DoNothing.ID -> R.string.action_none
         KeyAction.ToggleFlashlight.ID -> R.string.action_toggle_flashlight
         KeyAction.TakeScreenshot.ID -> R.string.action_take_screenshot
         KeyAction.LockScreen.ID -> R.string.action_lock_screen
@@ -41,7 +41,7 @@ object UiLabels {
      * capability check.
      */
     val builtInActions: List<KeyAction> = listOf(
-        KeyAction.None,
+        KeyAction.DoNothing,
         KeyAction.ToggleFlashlight,
         KeyAction.TakeScreenshot,
         KeyAction.LockScreen,

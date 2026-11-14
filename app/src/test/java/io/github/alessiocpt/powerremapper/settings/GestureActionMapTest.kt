@@ -14,7 +14,7 @@ class GestureActionMapTest {
         val map = GestureActionMap.EMPTY
 
         for (gesture in KeyGesture.entries) {
-            assertEquals(KeyAction.None, map.actionFor(gesture))
+            assertEquals(KeyAction.DoNothing, map.actionFor(gesture))
         }
     }
 
@@ -23,7 +23,7 @@ class GestureActionMapTest {
         val map = GestureActionMap.EMPTY.with(KeyGesture.DOUBLE_PRESS, KeyAction.TakeScreenshot)
 
         assertEquals(KeyAction.TakeScreenshot, map.actionFor(KeyGesture.DOUBLE_PRESS))
-        assertEquals(KeyAction.None, map.actionFor(KeyGesture.SINGLE_PRESS))
+        assertEquals(KeyAction.DoNothing, map.actionFor(KeyGesture.SINGLE_PRESS))
     }
 
     @Test
@@ -41,7 +41,7 @@ class GestureActionMapTest {
     fun with_overwritesPreviousActionForSameGesture() {
         val map = GestureActionMap.EMPTY
             .with(KeyGesture.SINGLE_PRESS, KeyAction.LockScreen)
-            .with(KeyGesture.SINGLE_PRESS, KeyAction.None)
+            .with(KeyGesture.SINGLE_PRESS, KeyAction.DoNothing)
 
         assertTrue(map.activeGestures().isEmpty())
     }

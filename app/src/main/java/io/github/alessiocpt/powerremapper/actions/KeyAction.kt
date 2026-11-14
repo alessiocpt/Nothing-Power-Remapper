@@ -10,8 +10,11 @@ sealed interface KeyAction {
     /** Stable identifier persisted in settings. Payload (if any) is stored separately. */
     val id: String
 
-    /** Does nothing. The default mapping for every gesture. */
-    data object None : KeyAction {
+    /**
+     * Deliberately does nothing: the default for every gesture, and how a Profile blocks one. Its
+     * persisted id stays "none" so older settings still read back.
+     */
+    data object DoNothing : KeyAction {
         override val id: String = ID
         const val ID: String = "none"
     }
@@ -79,11 +82,11 @@ sealed interface KeyAction {
     companion object {
         /**
          * Rebuilds a [KeyAction] from its persisted [id] and optional [payload]. Unknown ids fall
-         * back to [None] so a settings schema change can never crash the reader.
+         * back to [DoNothing] so a settings schema change can never crash the reader.
          */
         fun fromPersisted(id: String, payload: String?): KeyAction = when (id) {
-            None.ID -> None
-            LaunchApp.ID -> if (payload.isNullOrEmpty()) None else LaunchApp(payload)
+            DoNothing.ID -> DoNothing
+            LaunchApp.ID -> if (payload.isNullOrEmpty()) DoNothing else LaunchApp(payload)
             ToggleFlashlight.ID -> ToggleFlashlight
             TakeScreenshot.ID -> TakeScreenshot
             LockScreen.ID -> LockScreen
@@ -92,7 +95,7 @@ sealed interface KeyAction {
             MediaPrevious.ID -> MediaPrevious
             RingerCycle.ID -> RingerCycle
             ToggleGlyphLight.ID -> ToggleGlyphLight
-            else -> None
+            else -> DoNothing
         }
 
         /** The optional payload to persist alongside a [KeyAction]'s id, or null if it has none. */
