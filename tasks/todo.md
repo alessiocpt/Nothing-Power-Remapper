@@ -179,11 +179,11 @@ gestures, no feedback") uses the active Profile's gestures.
 
 **Acceptance criteria:**
 - [ ] With a Profile for app X that sets single press and is Isolated, double press does nothing in X and runs the Default action elsewhere.
-- [ ] An app switch during a multi-tap does not reset the press in progress.
-- [ ] A debug-only path seeds a test Profile, since the editor UI does not exist yet.
+- [x] An app switch during a multi-tap does not reset the press in progress.
+- [x] A debug-only path seeds a test Profile, since the editor UI does not exist yet.
 
 **Verification:**
-- [ ] `./scripts/verify.sh` passes
+- [x] `./scripts/verify.sh` passes
 - [ ] Manual check: the scenario above on the phone
 
 **Dependencies:** Tasks 4, 6

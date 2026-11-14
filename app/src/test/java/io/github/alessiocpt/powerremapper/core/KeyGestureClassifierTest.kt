@@ -1,6 +1,7 @@
 package io.github.alessiocpt.powerremapper.core
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -267,5 +268,21 @@ class KeyGestureClassifierTest {
 
         scheduler.advanceBy(longPressThresholdMs)
         assertTrue(emitted.isEmpty())
+    }
+
+    @Test
+    fun isIdle_onlyBetweenGestures() {
+        val classifier = allGesturesClassifier()
+        assertTrue(classifier.isIdle)
+
+        classifier.onKeyDown(0)
+        assertFalse("a press is in progress", classifier.isIdle)
+
+        classifier.onKeyUp(downTimeMs = 0, timestampMs = 10)
+        assertFalse("waiting for a possible second tap", classifier.isIdle)
+
+        scheduler.advanceBy(multiTapWindowMs)
+        assertEquals(listOf(KeyGesture.SINGLE_PRESS), emitted)
+        assertTrue(classifier.isIdle)
     }
 }

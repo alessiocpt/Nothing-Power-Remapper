@@ -39,6 +39,13 @@ class KeyGestureClassifier(
     private var longPressTimer: Cancellable? = null
     private var multiTapTimer: Cancellable? = null
 
+    /**
+     * True between gestures: no press is held and no multi-tap decision is pending. Swapping in a
+     * classifier with different enabled gestures is only safe then, or it would cut a gesture short.
+     */
+    val isIdle: Boolean
+        get() = tapCount == 0 && !pressInProgress
+
     fun onKeyDown(timestampMs: Long) {
         // Auto-repeat key-downs carry the same down time and are not a new press.
         if (timestampMs == pressDownTimeMs) {

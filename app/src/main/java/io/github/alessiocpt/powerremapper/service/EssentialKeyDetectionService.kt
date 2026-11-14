@@ -15,9 +15,9 @@ import io.github.alessiocpt.powerremapper.actions.KeyHaptics
 import io.github.alessiocpt.powerremapper.core.KeyGesture
 import io.github.alessiocpt.powerremapper.core.KeyGestureClassifier
 import io.github.alessiocpt.powerremapper.settings.DEFAULT_ESSENTIAL_KEY_SCAN_CODE
-import io.github.alessiocpt.powerremapper.settings.GestureActionMap
 import io.github.alessiocpt.powerremapper.settings.HapticPattern
 import io.github.alessiocpt.powerremapper.settings.HapticStrength
+import io.github.alessiocpt.powerremapper.settings.ProfileSet
 import io.github.alessiocpt.powerremapper.settings.SettingsRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -31,8 +31,8 @@ import kotlinx.coroutines.launch
 
 /**
  * Observes hardware key events, isolates the Essential Key by its learned scanCode, classifies the
- * gesture and runs the mapped action. It also follows window-state changes, reading only package and
- * class names, to know the Foreground App. Consuming the event does NOT stop Nothing OS's own single
+ * gesture and runs the action the active Profile maps it to. It also follows window-state changes,
+ * reading only package and class names, to know the Foreground App and so the Profile that applies. Consuming the event does NOT stop Nothing OS's own single
  * press handling (that needs the separate unlock flow); this service only observes and reacts.
  *
  * While the UI's detection screen is active it instead publishes every key event to
@@ -53,10 +53,15 @@ class EssentialKeyDetectionService : AccessibilityService() {
     // so each lookup is done once per process.
     private val activityLookups = HashMap<String, Boolean>()
 
-    // Rebuilt whenever settings change so the classifier reflects the current active gestures.
+    // Rebuilt whenever settings change, and between gestures when the active Profile's gestures
+    // differ, so the classifier only waits for gestures that would do something.
     private var classifier: KeyGestureClassifier? = null
+    private var classifierGestures: Set<KeyGesture> = emptySet()
+    // The down time of the last key-down seen, so a release whose key-down never arrived (screen
+    // off) is still recognised as the start of a new press.
+    private var lastKeyDownTimeMs: Long? = null
     private var learnedScanCode = DEFAULT_ESSENTIAL_KEY_SCAN_CODE
-    private var gestureActionMap = GestureActionMap.EMPTY
+    private var profileSet = ProfileSet()
     private var hapticStrength = HapticStrength.OFF
     private var customHapticPattern = HapticPattern.DEFAULT
     private var hapticsOnActionOnly = false
@@ -82,12 +87,12 @@ class EssentialKeyDetectionService : AccessibilityService() {
         serviceScope.launch {
             combine(
                 repository.essentialKeyScanCode,
-                repository.gestureActionMap
-            ) { scanCode, actionMap -> scanCode to actionMap }
-                .collect { (scanCode, actionMap) ->
+                repository.profileSet
+            ) { scanCode, profiles -> scanCode to profiles }
+                .collect { (scanCode, profiles) ->
                     learnedScanCode = scanCode
-                    gestureActionMap = actionMap
-                    rebuildClassifier(actionMap)
+                    profileSet = profiles
+                    rebuildClassifier()
                 }
         }
         serviceScope.launch {
@@ -104,12 +109,13 @@ class EssentialKeyDetectionService : AccessibilityService() {
         }
     }
 
-    private fun rebuildClassifier(actionMap: GestureActionMap) {
+    private fun rebuildClassifier() {
         classifier?.reset()
         suppressNextClassifiedAction = false
         classifierBuiltWhileSuppressed = KeyEventStream.actionExecutionSuppressed
+        classifierGestures = enabledGestures()
         classifier = KeyGestureClassifier(
-            enabledGestures = enabledGesturesFor(actionMap),
+            enabledGestures = classifierGestures,
             scheduler = HandlerGestureScheduler(mainHandler),
             onGesture = ::onGestureClassified,
             onPress = ::onPress
@@ -122,12 +128,19 @@ class EssentialKeyDetectionService : AccessibilityService() {
      * action execution precisely so it can show the raw gesture the user pressed, so it needs every
      * gesture recognised regardless of what is currently mapped.
      */
-    private fun enabledGesturesFor(actionMap: GestureActionMap): Set<KeyGesture> =
+    private fun enabledGestures(): Set<KeyGesture> =
         if (KeyEventStream.actionExecutionSuppressed) {
             KeyGesture.entries.toSet()
         } else {
-            actionMap.activeGestures()
+            profileSet.activeGestures(activeApp())
         }
+
+    /**
+     * The app whose Profile applies: the Foreground App, or none (the Default Profile) while the
+     * lock screen shows, since the app underneath is not what the user is looking at.
+     */
+    private fun activeApp(): String? =
+        if (keyguardManager.isKeyguardLocked) null else foregroundAppTracker.foregroundApp
 
     override fun onKeyEvent(event: KeyEvent): Boolean {
         if (KeyEventStream.detectionModeActive) {
@@ -156,13 +169,17 @@ class EssentialKeyDetectionService : AccessibilityService() {
         if (!KeyEventFilter.matchesLearnedKey(event.scanCode, learnedScanCode)) {
             return false
         }
-        // Entering or leaving the key-test screen changes which gestures the classifier should
-        // recognise. Only apply that at the start of a new press so an in-flight multi-tap sequence
-        // is never disturbed mid-way through.
-        if (event.action == KeyEvent.ACTION_DOWN &&
-            classifierBuiltWhileSuppressed != KeyEventStream.actionExecutionSuppressed
+        // Switching app, locking the phone, or entering or leaving the key-test screen can change
+        // which gestures the classifier should recognise. Only apply that when a new press starts
+        // while no gesture is in flight, so a multi-tap sequence is never cut short.
+        if (startsNewPress(event) && classifier?.isIdle != false &&
+            (classifierBuiltWhileSuppressed != KeyEventStream.actionExecutionSuppressed ||
+                classifierGestures != enabledGestures())
         ) {
-            rebuildClassifier(gestureActionMap)
+            rebuildClassifier()
+        }
+        if (event.action == KeyEvent.ACTION_DOWN) {
+            lastKeyDownTimeMs = event.downTime
         }
         // Remember that this gesture began on the test screen. Some gestures resolve after a short
         // timeout, when the user may already have navigated away and cleared the screen-wide flag.
@@ -182,6 +199,14 @@ class EssentialKeyDetectionService : AccessibilityService() {
         return true
     }
 
+    /**
+     * A key-down with a new down time starts a press; auto-repeats share it. A key-up starts one
+     * only when its key-down never arrived, as when Nothing OS spends it waking the screen.
+     */
+    private fun startsNewPress(event: KeyEvent): Boolean =
+        (event.action == KeyEvent.ACTION_DOWN || event.action == KeyEvent.ACTION_UP) &&
+            event.downTime != lastKeyDownTimeMs
+
     private fun feedClassifier(event: KeyEvent) {
         val activeClassifier = classifier ?: return
         when (event.action) {
@@ -195,7 +220,7 @@ class EssentialKeyDetectionService : AccessibilityService() {
     // ignored while locked, gets no feedback.
     private fun onPress() {
         if (!hapticsOnActionOnly &&
-            gestureActionMap.activeGestures().isNotEmpty() &&
+            profileSet.activeGestures(activeApp()).isNotEmpty() &&
             !ignoredWhileLocked()
         ) {
             keyHaptics.perform(hapticStrength, customHapticPattern)
@@ -209,7 +234,7 @@ class EssentialKeyDetectionService : AccessibilityService() {
         val actionSuppressed = KeyEventStream.actionExecutionSuppressed || suppressNextClassifiedAction
         suppressNextClassifiedAction = false
         if (!actionSuppressed && !ignoredWhileLocked()) {
-            val action = gestureActionMap.actionFor(gesture)
+            val action = profileSet.resolve(activeApp(), gesture)
             if (hapticsOnActionOnly && action != KeyAction.DoNothing) {
                 keyHaptics.perform(hapticStrength, customHapticPattern)
             }

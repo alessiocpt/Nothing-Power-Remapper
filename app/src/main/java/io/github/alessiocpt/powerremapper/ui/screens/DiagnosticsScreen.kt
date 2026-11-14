@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.ClipData
 import android.content.ClipDescription
 import android.content.Intent
+import android.content.pm.ApplicationInfo
 import android.os.PersistableBundle
 import android.widget.Toast
 import androidx.compose.foundation.horizontalScroll
@@ -20,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -34,11 +36,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import io.github.alessiocpt.powerremapper.R
+import io.github.alessiocpt.powerremapper.actions.KeyAction
+import io.github.alessiocpt.powerremapper.core.KeyGesture
 import io.github.alessiocpt.powerremapper.diagnostics.CrashReportStore
 import io.github.alessiocpt.powerremapper.diagnostics.buildCrashIssueUrl
 import io.github.alessiocpt.powerremapper.diagnostics.ProcessExit
 import io.github.alessiocpt.powerremapper.diagnostics.formatProcessExit
 import io.github.alessiocpt.powerremapper.diagnostics.readRecentProcessExits
+import io.github.alessiocpt.powerremapper.settings.Fallback
+import io.github.alessiocpt.powerremapper.settings.GestureSlot
+import io.github.alessiocpt.powerremapper.settings.Profile
+import io.github.alessiocpt.powerremapper.settings.SettingsRepository
 import io.github.alessiocpt.powerremapper.ui.ISSUES_URL
 import io.github.alessiocpt.powerremapper.ui.components.NothingButton
 import io.github.alessiocpt.powerremapper.ui.components.NothingCard
@@ -58,6 +66,9 @@ private val BUTTON_GAP = 12.dp
 private val EXIT_ROW_GAP = 8.dp
 
 private const val CLIP_LABEL = "Nothing Poweruser Remapper crash report"
+
+// Temporary until the Profile screens exist (Task 8): a fixed Profile to try on a debug build.
+private const val TEST_PROFILE_PACKAGE = "com.nothing.camera"
 
 /**
  * Turns "it crashed" into something reportable. The last crash this app caught, plus the exits
@@ -118,6 +129,60 @@ fun DiagnosticsScreen(
         )
         Spacer(modifier = Modifier.height(CARD_GAP))
         ProcessExitsCard(exits = processExits)
+        if (context.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0) {
+            Spacer(modifier = Modifier.height(CARD_GAP))
+            TestProfileCard()
+        }
+    }
+}
+
+/**
+ * Debug builds only, until the Profile screens exist: adds or removes a fixed Isolated Profile for
+ * Nothing Camera that maps long press to a screenshot, so Profile switching can be tried on a phone.
+ */
+@Composable
+private fun TestProfileCard() {
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    val repository = remember(context) { SettingsRepository.getInstance(context) }
+    val profiles by repository.profileSet.collectAsState(initial = null)
+    val hasTestProfile = profiles?.profileFor(TEST_PROFILE_PACKAGE) != null
+    NothingCard(modifier = Modifier.fillMaxWidth()) {
+        NothingSectionLabel(text = stringResource(R.string.diagnostics_test_profile_title))
+        Spacer(modifier = Modifier.height(LABEL_GAP))
+        Text(
+            text = stringResource(R.string.diagnostics_test_profile_body),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Spacer(modifier = Modifier.height(BODY_GAP))
+        NothingButton(
+            text = stringResource(
+                if (hasTestProfile) {
+                    R.string.diagnostics_test_profile_remove
+                } else {
+                    R.string.diagnostics_test_profile_add
+                }
+            ),
+            onClick = {
+                coroutineScope.launch {
+                    if (hasTestProfile) {
+                        repository.deleteProfile(TEST_PROFILE_PACKAGE)
+                    } else {
+                        repository.upsertProfile(
+                            Profile.newFor(TEST_PROFILE_PACKAGE)
+                                .withFallback(Fallback.ISOLATED)
+                                .withSlot(
+                                    KeyGesture.LONG_PRESS,
+                                    GestureSlot.Assigned(KeyAction.TakeScreenshot)
+                                )
+                        )
+                    }
+                }
+            },
+            enabled = profiles != null,
+            modifier = Modifier.fillMaxWidth()
+        )
     }
 }
 
