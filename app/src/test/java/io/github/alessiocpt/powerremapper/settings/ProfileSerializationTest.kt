@@ -75,4 +75,11 @@ class ProfileSerializationTest {
 
         assertEquals(listOf(Profile.newFor(TELEGRAM).withFallback(Fallback.ISOLATED)), profiles)
     }
+
+    @Test
+    fun profilesAreEncodedAsAJsonArray() {
+        val json = ProfileSerialization.encodeProfiles(listOf(Profile.newFor(CAMERA)))
+
+        assertTrue(json, json.startsWith("{\"profiles\":[{"))
+    }
 }

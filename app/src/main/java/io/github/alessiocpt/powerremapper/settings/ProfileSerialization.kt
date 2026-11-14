@@ -2,6 +2,7 @@ package io.github.alessiocpt.powerremapper.settings
 
 import io.github.alessiocpt.powerremapper.actions.KeyAction
 import io.github.alessiocpt.powerremapper.core.KeyGesture
+import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -28,7 +29,10 @@ object ProfileSerialization {
     private const val ACTION_PAYLOAD_FIELD = "payload"
 
     fun encodeProfiles(profiles: List<Profile>): String {
-        val encoded = profiles.map { profile ->
+        // Built as a JSONArray, not a List: Android's org.json stores a List passed to put() as its
+        // toString(), a quoted string, where the desktop org.json used by unit tests wraps it.
+        val encoded = JSONArray()
+        for (profile in profiles) {
             val slots = JSONObject()
             for (gesture in KeyGesture.entries) {
                 val slot = profile.slotFor(gesture) as? GestureSlot.Assigned ?: continue
@@ -40,10 +44,12 @@ object ProfileSerialization {
                         .putOpt(ACTION_PAYLOAD_FIELD, persisted.payload)
                 )
             }
-            JSONObject()
-                .put(PACKAGE_FIELD, profile.packageName)
-                .put(FALLBACK_FIELD, profile.fallback.name.lowercase())
-                .put(SLOTS_FIELD, slots)
+            encoded.put(
+                JSONObject()
+                    .put(PACKAGE_FIELD, profile.packageName)
+                    .put(FALLBACK_FIELD, profile.fallback.name.lowercase())
+                    .put(SLOTS_FIELD, slots)
+            )
         }
         return JSONObject().put(PROFILES_FIELD, encoded).toString()
     }
