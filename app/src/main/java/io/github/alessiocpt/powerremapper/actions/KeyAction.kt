@@ -127,6 +127,15 @@ sealed interface KeyAction {
         const val ID: String = "launch_assistant"
     }
 
+    /** Opens the default camera app in [mode]; photo mode also works over the lock screen. */
+    data class LaunchCamera(val mode: CameraMode) : KeyAction {
+        override val id: String = ID
+
+        companion object {
+            const val ID: String = "launch_camera"
+        }
+    }
+
     /**
      * Raises or lowers the volume of whatever is playing, showing the system volume panel. Not the
      * same as sending a volume key to an app, which Camera Shutter does.
@@ -162,6 +171,7 @@ sealed interface KeyAction {
             GoBack.ID -> GoBack
             ShowRecents.ID -> ShowRecents
             ShowPowerMenu.ID -> ShowPowerMenu
+            LaunchCamera.ID -> CameraMode.fromPersisted(payload)?.let(::LaunchCamera) ?: DoNothing
             AdjustVolume.ID -> VolumeDirection.fromPersisted(payload)?.let(::AdjustVolume) ?: DoNothing
             else -> DoNothing
         }
@@ -170,6 +180,7 @@ sealed interface KeyAction {
         fun payloadOf(action: KeyAction): String? = when (action) {
             is LaunchApp -> action.packageName
             is AdjustVolume -> action.direction.persisted
+            is LaunchCamera -> action.mode.persisted
             else -> null
         }
     }
@@ -183,5 +194,17 @@ enum class VolumeDirection(val persisted: String) {
     companion object {
         fun fromPersisted(value: String?): VolumeDirection? =
             entries.firstOrNull { direction -> direction.persisted == value }
+    }
+}
+
+/** What [KeyAction.LaunchCamera] opens the camera ready to do. */
+enum class CameraMode(val persisted: String) {
+    PHOTO("photo"),
+    VIDEO("video"),
+    SELFIE("selfie");
+
+    companion object {
+        fun fromPersisted(value: String?): CameraMode? =
+            entries.firstOrNull { mode -> mode.persisted == value }
     }
 }

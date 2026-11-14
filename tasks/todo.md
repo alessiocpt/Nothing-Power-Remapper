@@ -330,11 +330,11 @@ chooser, since several apps answer it; `VOICE_COMMAND` is not answered by Claude
 hint when no assistant is set, and a press with none set shows a toast.
 
 **Acceptance criteria:**
-- [ ] With Claude as the default assistant, the action opens Claude.
-- [ ] With no assistant set, the hint shows and the press shows a toast without crashing.
+- [x] With Claude as the default assistant, the action opens Claude.
+- [x] With no assistant set, the hint shows and the press shows a toast without crashing.
 
 **Verification:**
-- [ ] `./scripts/verify.sh`; manual check on the phone with Claude set as the assistant
+- [x] `./scripts/verify.sh`; manual check on the phone with Claude set as the assistant
 
 **Dependencies:** Checkpoint C
 
@@ -354,7 +354,7 @@ read, and the picker notes that some apps ignore them.
 **Acceptance criteria:**
 - [ ] All three modes open Nothing Camera in the right mode.
 - [ ] On the lock screen, with "only when unlocked" off, photo mode opens over the keyguard.
-- [ ] The mode persists as the payload, and the round trip is tested.
+- [x] The mode persists as the payload, and the round trip is tested.
 
 **Verification:**
 - [ ] `./scripts/verify.sh`; manual check on the phone

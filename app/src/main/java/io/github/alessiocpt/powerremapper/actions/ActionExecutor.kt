@@ -10,6 +10,7 @@ import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
 import android.media.AudioManager
+import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
 import android.view.KeyEvent
@@ -77,6 +78,7 @@ class ActionExecutor(
             is KeyAction.ToggleQuickSettings ->
                 toggleShade(AccessibilityService.GLOBAL_ACTION_QUICK_SETTINGS)
             is KeyAction.LaunchAssistant -> launchAssistant()
+            is KeyAction.LaunchCamera -> launchCamera(action.mode)
             is KeyAction.GoHome -> performGlobalAction(
                 AccessibilityService.GLOBAL_ACTION_HOME,
                 R.string.error_system_action_failed
@@ -263,6 +265,33 @@ class ActionExecutor(
     }
 
     /**
+     * Opens the default camera. While locked, photo and selfie use the secure intent, which opens
+     * over the lock screen; there is no secure video intent, so video asks to unlock first.
+     * Selfie adds the front-camera extras common camera apps read; some apps ignore them.
+     */
+    private fun launchCamera(mode: CameraMode) {
+        val locked = context.getSystemService(KeyguardManager::class.java)?.isKeyguardLocked == true
+        val intent = Intent(
+            when {
+                mode == CameraMode.VIDEO -> MediaStore.INTENT_ACTION_VIDEO_CAMERA
+                locked -> MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE
+                else -> MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA
+            }
+        ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        if (mode == CameraMode.SELFIE) {
+            intent.putExtra(EXTRA_CAMERA_FACING, FRONT_CAMERA)
+                .putExtra(EXTRA_LENS_FACING_FRONT, FRONT_CAMERA)
+                .putExtra(EXTRA_USE_FRONT_CAMERA, true)
+        }
+        try {
+            context.startActivity(intent)
+        } catch (error: android.content.ActivityNotFoundException) {
+            Log.w(TAG, "No camera app answers ${intent.action}", error)
+            toast(R.string.error_camera_unavailable)
+        }
+    }
+
+    /**
      * Moves the volume one step and shows the system panel, like the volume keys. Android picks the
      * stream, so it changes media volume while something plays and the ringer otherwise.
      */
@@ -336,6 +365,12 @@ class ActionExecutor(
         Toast.makeText(context, messageRes, Toast.LENGTH_SHORT).show()
     }
 }
+
+// Unofficial "open the front camera" extras; Google Camera and most OEM camera apps read one.
+private const val EXTRA_CAMERA_FACING = "android.intent.extras.CAMERA_FACING"
+private const val EXTRA_LENS_FACING_FRONT = "android.intent.extras.LENS_FACING_FRONT"
+private const val EXTRA_USE_FRONT_CAMERA = "android.intent.extra.USE_FRONT_CAMERA"
+private const val FRONT_CAMERA = 1
 
 // Settings keys the system writes when the user picks a digital assistant: the assist component,
 // falling back to the voice interaction service. Either names the assistant's package.

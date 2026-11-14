@@ -1,6 +1,7 @@
 package io.github.alessiocpt.powerremapper.ui
 
 import io.github.alessiocpt.powerremapper.R
+import io.github.alessiocpt.powerremapper.actions.CameraMode
 import io.github.alessiocpt.powerremapper.actions.KeyAction
 import io.github.alessiocpt.powerremapper.actions.VolumeDirection
 import io.github.alessiocpt.powerremapper.core.KeyGesture
@@ -23,6 +24,11 @@ object UiLabels {
      * a launch action shows the resolved app name, which is not a static resource.
      */
     fun builtInActionLabelRes(action: KeyAction): Int = when (action) {
+        is KeyAction.LaunchCamera -> when (action.mode) {
+            CameraMode.PHOTO -> R.string.action_launch_camera_photo
+            CameraMode.VIDEO -> R.string.action_launch_camera_video
+            CameraMode.SELFIE -> R.string.action_launch_camera_selfie
+        }
         is KeyAction.AdjustVolume -> when (action.direction) {
             VolumeDirection.UP -> R.string.action_volume_up
             VolumeDirection.DOWN -> R.string.action_volume_down
@@ -66,6 +72,9 @@ object UiLabels {
         KeyAction.MediaPrevious,
         KeyAction.RingerCycle,
         KeyAction.LaunchAssistant,
+        KeyAction.LaunchCamera(CameraMode.PHOTO),
+        KeyAction.LaunchCamera(CameraMode.VIDEO),
+        KeyAction.LaunchCamera(CameraMode.SELFIE),
         KeyAction.ToggleNotifications,
         KeyAction.ToggleQuickSettings,
         KeyAction.AdjustVolume(VolumeDirection.UP),

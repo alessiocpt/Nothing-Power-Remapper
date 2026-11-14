@@ -34,6 +34,12 @@
         <intent>
             <action android:name="android.media.action.IMAGE_CAPTURE" />
         </intent>
+        <intent>
+            <action android:name="android.media.action.VIDEO_CAMERA" />
+        </intent>
+        <intent>
+            <action android:name="android.media.action.STILL_IMAGE_CAMERA_SECURE" />
+        </intent>
 
         <!-- The home screen must be visible too: the service checks that a window belongs to an
              activity before treating its app as the Foreground App, and the launcher's home

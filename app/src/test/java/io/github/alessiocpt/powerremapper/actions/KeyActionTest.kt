@@ -41,4 +41,16 @@ class KeyActionTest {
         assertEquals(KeyAction.DoNothing, KeyAction.fromPersisted(KeyAction.AdjustVolume.ID, null))
         assertEquals(KeyAction.DoNothing, KeyAction.fromPersisted(KeyAction.AdjustVolume.ID, "sideways"))
     }
+
+    @Test
+    fun launchCameraKeepsItsMode() {
+        for (mode in CameraMode.entries) {
+            assertEquals(KeyAction.LaunchCamera(mode), roundTrip(KeyAction.LaunchCamera(mode)))
+        }
+    }
+
+    @Test
+    fun launchCameraWithoutAKnownModeDoesNothing() {
+        assertEquals(KeyAction.DoNothing, KeyAction.fromPersisted(KeyAction.LaunchCamera.ID, "panorama"))
+    }
 }

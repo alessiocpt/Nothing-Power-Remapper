@@ -146,6 +146,10 @@
     <string name="action_launch_assistant">Launch assistant</string>
     <string name="error_no_default_assistant">No default assistant is set. Choose one in Settings › Apps › Default apps › Digital assistant app.</string>
     <string name="picker_no_default_assistant">No default assistant set: choose one in Settings › Apps › Default apps</string>
+    <string name="action_launch_camera_photo">Camera: photo</string>
+    <string name="action_launch_camera_video">Camera: video</string>
+    <string name="action_launch_camera_selfie">Camera: selfie</string>
+    <string name="error_camera_unavailable">No camera app could be opened.</string>
     <string name="action_toggle_notifications">Toggle notifications</string>
     <string name="action_toggle_quick_settings">Toggle Quick Settings</string>
     <string name="action_volume_up">Volume up</string>
