@@ -200,8 +200,7 @@ enum class VolumeDirection(val persisted: String) {
 /** What [KeyAction.LaunchCamera] opens the camera ready to do. */
 enum class CameraMode(val persisted: String) {
     PHOTO("photo"),
-    VIDEO("video"),
-    SELFIE("selfie");
+    VIDEO("video");
 
     companion object {
         fun fromPersisted(value: String?): CameraMode? =

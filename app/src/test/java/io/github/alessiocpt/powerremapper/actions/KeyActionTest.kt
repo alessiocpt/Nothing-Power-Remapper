@@ -52,5 +52,7 @@ class KeyActionTest {
     @Test
     fun launchCameraWithoutAKnownModeDoesNothing() {
         assertEquals(KeyAction.DoNothing, KeyAction.fromPersisted(KeyAction.LaunchCamera.ID, "panorama"))
+        // Selfie was offered briefly; Nothing Camera cannot be opened on the front camera.
+        assertEquals(KeyAction.DoNothing, KeyAction.fromPersisted(KeyAction.LaunchCamera.ID, "selfie"))
     }
 }

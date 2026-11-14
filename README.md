@@ -18,7 +18,7 @@ THE-TECH-CHANGER. It is distributed on GitHub only. See
 | Per-app **Profiles** with Inherit / Isolated **Fallback** | Working |
 | Home, Back, Recents, Power menu, Split screen, Adjust Volume | Planned |
 | Toggle Notifications / Toggle Quick Settings | Planned |
-| Launch Assistant, Launch Camera (photo / video / selfie), Camera Shutter | Planned |
+| Launch Assistant, Launch Camera (photo / video), Camera Shutter | Planned |
 
 The plan is in [tasks/plan.md](tasks/plan.md), and the vocabulary is in [CONTEXT.md](CONTEXT.md).
 

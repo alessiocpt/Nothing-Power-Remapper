@@ -352,7 +352,7 @@ is used while the keyguard is locked. Selfie adds the front-facing extras that c
 read, and the picker notes that some apps ignore them.
 
 **Acceptance criteria:**
-- [ ] All three modes open Nothing Camera in the right mode.
+- [x] Photo and video open Nothing Camera in the right mode (selfie dropped: Nothing Camera has no public front-camera request)
 - [ ] On the lock screen, with "only when unlocked" off, photo mode opens over the keyguard.
 - [x] The mode persists as the payload, and the round trip is tested.
 
@@ -422,4 +422,4 @@ description mentions that single press needs the unlock wizard.
 
 ## Later
 - [ ] Remove the onboarding language step and the Settings language card. The app is English only, so the step offers only "Device language" and "English". (Task 3 only removed the Traditional Chinese option.)
-- [ ] Spike: cycle Nothing Camera zoom presets by clicking them (needs window-content access scoped to Nothing Camera; decide after the spike)
+- [ ] Spike: cycle Nothing Camera zoom presets by clicking them. Include switching to the front camera: Nothing Camera ignores the front-camera extras and its selfie shortcut activity is not exported, so Camera: selfie was dropped from Task 14 (needs window-content access scoped to Nothing Camera; decide after the spike)

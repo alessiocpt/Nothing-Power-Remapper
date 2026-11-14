@@ -27,7 +27,6 @@ object UiLabels {
         is KeyAction.LaunchCamera -> when (action.mode) {
             CameraMode.PHOTO -> R.string.action_launch_camera_photo
             CameraMode.VIDEO -> R.string.action_launch_camera_video
-            CameraMode.SELFIE -> R.string.action_launch_camera_selfie
         }
         is KeyAction.AdjustVolume -> when (action.direction) {
             VolumeDirection.UP -> R.string.action_volume_up
@@ -74,7 +73,6 @@ object UiLabels {
         KeyAction.LaunchAssistant,
         KeyAction.LaunchCamera(CameraMode.PHOTO),
         KeyAction.LaunchCamera(CameraMode.VIDEO),
-        KeyAction.LaunchCamera(CameraMode.SELFIE),
         KeyAction.ToggleNotifications,
         KeyAction.ToggleQuickSettings,
         KeyAction.AdjustVolume(VolumeDirection.UP),
