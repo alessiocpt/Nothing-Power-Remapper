@@ -102,13 +102,13 @@ packages, so the last real app stays current. Show the current Foreground App li
 Test screen, for diagnosis.
 
 **Acceptance criteria:**
-- [ ] Opening the shade, keyboard or this app over Camera leaves the Foreground App as Camera.
-- [ ] The service config still does not request window content (`canRetrieveWindowContent` absent).
-- [ ] Unit tests cover the ignore rules and the "keep last real app" behaviour.
+- [x] Opening the shade, keyboard or this app over Camera leaves the Foreground App as Camera.
+- [x] The service config still does not request window content (`canRetrieveWindowContent` absent).
+- [x] Unit tests cover the ignore rules and the "keep last real app" behaviour.
 
 **Verification:**
-- [ ] `./gradlew testDebugUnitTest --tests '*ForegroundAppTracker*'`
-- [ ] Manual check: Key Test screen shows the right package while switching apps via Recents
+- [x] `./gradlew testDebugUnitTest --tests '*ForegroundAppTracker*'`
+- [x] Manual check: Key Test's recent-apps list was right after Camera, shade over Camera, keyboard and home screen (Recents is part of the launcher, so Key Test shows a short history)
 
 **Dependencies:** Checkpoint A
 
