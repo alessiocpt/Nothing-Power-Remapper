@@ -21,6 +21,15 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent>
 
+        <!-- Camera apps must be visible so a camera app's Profile can grey out Flashlight, which
+             Android blocks while another app holds the camera. -->
+        <intent>
+            <action android:name="android.media.action.STILL_IMAGE_CAMERA" />
+        </intent>
+        <intent>
+            <action android:name="android.media.action.IMAGE_CAPTURE" />
+        </intent>
+
         <!-- The home screen must be visible too: the service checks that a window belongs to an
              activity before treating its app as the Foreground App, and the launcher's home
              activity is not always a LAUNCHER entry. -->

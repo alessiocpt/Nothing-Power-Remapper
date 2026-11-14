@@ -44,6 +44,7 @@ import io.github.alessiocpt.powerremapper.glyph.GlyphDevice
 import io.github.alessiocpt.powerremapper.settings.GestureSlot
 import io.github.alessiocpt.powerremapper.settings.SettingsRepository
 import io.github.alessiocpt.powerremapper.ui.AppLabelResolver
+import io.github.alessiocpt.powerremapper.ui.CameraApps
 import io.github.alessiocpt.powerremapper.ui.LaunchableApp
 import io.github.alessiocpt.powerremapper.ui.InstalledApps
 import io.github.alessiocpt.powerremapper.ui.UiLabels
@@ -119,6 +120,15 @@ fun ActionPickerScreen(
         UiLabels.builtInActions.filter { action -> action != KeyAction.ToggleGlyphLight }
     }
     val matchingActions = filterBuiltInActions(availableBuiltInActions, query, context)
+    // A camera app holds the camera while it is in front, and Android then refuses the torch.
+    val isCameraProfile = remember(profilePackage) {
+        profilePackage != null && CameraApps.isCameraApp(context, profilePackage)
+    }
+    val unavailableActions = if (isCameraProfile) {
+        setOf<KeyAction>(KeyAction.ToggleFlashlight)
+    } else {
+        emptySet()
+    }
     val matchingApps = filterApps(apps, query)
 
     LazyColumn(
@@ -164,7 +174,11 @@ fun ActionPickerScreen(
 
         if (matchingActions.isNotEmpty()) {
             item {
-                BuiltInActionsCard(actions = matchingActions, onSelect = ::save)
+                BuiltInActionsCard(
+                    actions = matchingActions,
+                    unavailableActions = unavailableActions,
+                    onSelect = ::save
+                )
                 Spacer(modifier = Modifier.height(SECTION_GAP))
             }
         }
@@ -241,15 +255,26 @@ internal fun SearchField(query: String, onQueryChange: (String) -> Unit) {
 }
 
 @Composable
-private fun BuiltInActionsCard(actions: List<KeyAction>, onSelect: (KeyAction) -> Unit) {
+private fun BuiltInActionsCard(
+    actions: List<KeyAction>,
+    unavailableActions: Set<KeyAction>,
+    onSelect: (KeyAction) -> Unit
+) {
     NothingCard(modifier = Modifier.fillMaxWidth()) {
         NothingSectionLabel(text = stringResource(R.string.picker_section_builtin))
         Spacer(modifier = Modifier.height(LABEL_GAP))
         Column(verticalArrangement = Arrangement.spacedBy(ROW_GAP)) {
             for (action in actions) {
+                val unavailable = action in unavailableActions
                 ActionTextRow(
                     label = stringResource(UiLabels.builtInActionLabelRes(action.id)),
-                    onClick = { onSelect(action) }
+                    onClick = { onSelect(action) },
+                    caption = if (unavailable) {
+                        stringResource(R.string.picker_unavailable_in_camera)
+                    } else {
+                        null
+                    },
+                    enabled = !unavailable
                 )
             }
         }
@@ -257,16 +282,35 @@ private fun BuiltInActionsCard(actions: List<KeyAction>, onSelect: (KeyAction) -
 }
 
 @Composable
-private fun ActionTextRow(label: String, onClick: () -> Unit) {
-    Text(
-        text = label,
-        style = MaterialTheme.typography.bodyLarge,
-        color = MaterialTheme.colorScheme.onBackground,
+private fun ActionTextRow(
+    label: String,
+    onClick: () -> Unit,
+    caption: String? = null,
+    enabled: Boolean = true
+) {
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .clickable(enabled = enabled, onClick = onClick)
             .padding(vertical = ROW_VERTICAL_PADDING)
-    )
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyLarge,
+            color = if (enabled) {
+                MaterialTheme.colorScheme.onBackground
+            } else {
+                MaterialTheme.colorScheme.onSurfaceVariant
+            }
+        )
+        if (caption != null) {
+            Text(
+                text = caption,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
 }
 
 @Composable

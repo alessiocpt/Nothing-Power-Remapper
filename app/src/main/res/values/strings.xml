@@ -31,6 +31,8 @@
     <string name="profile_editor_unassigned_default">%1$s (from Default)</string>
     <string name="profile_editor_unassigned_nothing">Does nothing (Isolated)</string>
     <string name="picker_profile_subtitle">%1$s in %2$s</string>
+    <string name="picker_unavailable_in_camera">Unavailable: Android blocks the torch while a camera app is open</string>
+    <string name="profile_editor_unavailable_in_camera">Flashlight (blocked in camera apps)</string>
     <string name="picker_unassigned">Unassigned: follow the profile\'s fallback</string>
     <string name="profiles_delete">Delete</string>
     <string name="profiles_delete_title">Delete the %1$s profile?</string>

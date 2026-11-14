@@ -34,6 +34,7 @@ import io.github.alessiocpt.powerremapper.settings.Fallback
 import io.github.alessiocpt.powerremapper.settings.GestureSlot
 import io.github.alessiocpt.powerremapper.settings.SettingsRepository
 import io.github.alessiocpt.powerremapper.ui.AppLabelResolver
+import io.github.alessiocpt.powerremapper.ui.CameraApps
 import io.github.alessiocpt.powerremapper.ui.UiLabels
 import io.github.alessiocpt.powerremapper.ui.components.NothingCard
 import io.github.alessiocpt.powerremapper.ui.components.NothingSectionLabel
@@ -65,6 +66,7 @@ fun ProfileEditorScreen(
     val profileSet by repository.profileSet.collectAsState(initial = null)
     val profiles = profileSet ?: return
     val profile = profiles.profileFor(packageName) ?: return
+    val cameraApp = remember(packageName) { CameraApps.isCameraApp(context, packageName) }
 
     Column(
         modifier = modifier
@@ -127,10 +129,16 @@ fun ProfileEditorScreen(
             Column(verticalArrangement = Arrangement.spacedBy(LABEL_GAP)) {
                 for (gesture in KeyGesture.entries) {
                     val slot = profile.slotFor(gesture)
+                    val resolved = profiles.resolve(packageName, gesture)
+                    val unavailable = cameraApp && resolved == KeyAction.ToggleFlashlight
                     GestureSlotRow(
                         gesture = gesture,
-                        label = slotLabel(context, slot, profiles.resolve(packageName, gesture)),
-                        inherited = slot == GestureSlot.Unassigned,
+                        label = if (unavailable) {
+                            stringResource(R.string.profile_editor_unavailable_in_camera)
+                        } else {
+                            slotLabel(context, slot, resolved)
+                        },
+                        inherited = slot == GestureSlot.Unassigned || unavailable,
                         onClick = { onEditGesture(gesture) }
                     )
                 }
@@ -190,7 +198,10 @@ private fun GestureSlotRow(
             } else {
                 MaterialTheme.colorScheme.onBackground
             },
-            textAlign = TextAlign.End
+            textAlign = TextAlign.End,
+            // Weighted too, so a long label like "Flashlight (from Default)" wraps on its own side
+            // instead of squeezing the gesture name.
+            modifier = Modifier.weight(1f)
         )
     }
 }
