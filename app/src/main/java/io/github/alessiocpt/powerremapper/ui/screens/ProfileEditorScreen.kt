@@ -36,6 +36,7 @@ import io.github.alessiocpt.powerremapper.settings.SettingsRepository
 import io.github.alessiocpt.powerremapper.ui.AppLabelResolver
 import io.github.alessiocpt.powerremapper.ui.CameraApps
 import io.github.alessiocpt.powerremapper.ui.UiLabels
+import io.github.alessiocpt.powerremapper.ui.rememberShizukuReady
 import io.github.alessiocpt.powerremapper.ui.components.NothingCard
 import io.github.alessiocpt.powerremapper.ui.components.NothingSectionLabel
 import io.github.alessiocpt.powerremapper.ui.screenContentPadding
@@ -67,6 +68,7 @@ fun ProfileEditorScreen(
     val profiles = profileSet ?: return
     val profile = profiles.profileFor(packageName) ?: return
     val cameraApp = remember(packageName) { CameraApps.isCameraApp(context, packageName) }
+    val shizukuReady = rememberShizukuReady()
 
     Column(
         modifier = modifier
@@ -139,6 +141,7 @@ fun ProfileEditorScreen(
                             slotLabel(context, slot, resolved)
                         },
                         inherited = slot == GestureSlot.Unassigned || unavailable,
+                        showShizukuHint = resolved == KeyAction.CameraShutter && !shizukuReady,
                         onClick = { onEditGesture(gesture) }
                     )
                 }
@@ -174,6 +177,7 @@ private fun GestureSlotRow(
     gesture: KeyGesture,
     label: String,
     inherited: Boolean,
+    showShizukuHint: Boolean,
     onClick: () -> Unit
 ) {
     Row(
@@ -183,12 +187,20 @@ private fun GestureSlotRow(
             .padding(vertical = ROW_VERTICAL_PADDING),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = stringResource(UiLabels.gestureLabelRes(gesture)),
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onBackground,
-            modifier = Modifier.weight(1f)
-        )
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = stringResource(UiLabels.gestureLabelRes(gesture)),
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            if (showShizukuHint) {
+                Text(
+                    text = stringResource(R.string.shizuku_not_ready_hint),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+        }
         Spacer(modifier = Modifier.width(ROW_LABEL_GAP))
         Text(
             text = label,

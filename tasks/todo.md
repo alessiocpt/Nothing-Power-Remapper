@@ -378,11 +378,11 @@ Then rename `IPackageToggleService` to `IShellService` and add `injectKey(keyCod
 **Acceptance criteria:**
 - [x] The manual key test result is recorded in the commit message.
 - [x] `injectKey` rejects key codes outside the allowlist, and a unit test covers the command builder.
-- [ ] With Shizuku running, Camera Shutter takes a photo in Nothing Camera, and starts and stops recording in video mode.
+- [x] With Shizuku running, Camera Shutter takes a photo in Nothing Camera, and starts and stops recording in video mode.
 
 **Verification:**
 - [x] `./gradlew testDebugUnitTest --tests '*Shell*'`, then `./scripts/verify.sh`
-- [ ] Manual check on the phone
+- [x] Manual check on the phone
 
 **Dependencies:** Checkpoint C
 

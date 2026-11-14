@@ -46,6 +46,7 @@ import io.github.alessiocpt.powerremapper.settings.GestureActionMap
 import io.github.alessiocpt.powerremapper.settings.SettingsRepository
 import io.github.alessiocpt.powerremapper.ui.AppLabelResolver
 import io.github.alessiocpt.powerremapper.ui.UiLabels
+import io.github.alessiocpt.powerremapper.ui.rememberShizukuReady
 import io.github.alessiocpt.powerremapper.ui.screenContentPadding
 import io.github.alessiocpt.powerremapper.ui.components.NothingButton
 import io.github.alessiocpt.powerremapper.ui.components.NothingCard
@@ -325,12 +326,15 @@ private fun GesturesCard(
     NothingCard(modifier = Modifier.fillMaxWidth()) {
         NothingSectionLabel(text = stringResource(R.string.section_gestures))
         Spacer(modifier = Modifier.height(LABEL_GAP))
+        val shizukuReady = rememberShizukuReady()
         Column(verticalArrangement = Arrangement.spacedBy(GESTURE_ROW_GAP)) {
             for (gesture in KeyGesture.entries) {
+                val action = actionMap.actionFor(gesture)
                 GestureRow(
                     gesture = gesture,
-                    action = actionMap.actionFor(gesture),
+                    action = action,
                     showLockedHint = gesture == KeyGesture.SINGLE_PRESS && singlePressLocked,
+                    showShizukuHint = action == KeyAction.CameraShutter && !shizukuReady,
                     onClick = { onEditGesture(gesture) }
                 )
             }
@@ -343,6 +347,7 @@ private fun GestureRow(
     gesture: KeyGesture,
     action: KeyAction,
     showLockedHint: Boolean,
+    showShizukuHint: Boolean,
     onClick: () -> Unit
 ) {
     val context = LocalContext.current
@@ -365,6 +370,13 @@ private fun GestureRow(
                     text = stringResource(R.string.home_locked_by_nothing),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            if (showShizukuHint) {
+                Text(
+                    text = stringResource(R.string.shizuku_not_ready_hint),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.error
                 )
             }
         }

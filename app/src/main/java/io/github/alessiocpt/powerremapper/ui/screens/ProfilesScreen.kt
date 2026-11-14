@@ -34,12 +34,16 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.github.alessiocpt.powerremapper.R
+import io.github.alessiocpt.powerremapper.actions.KeyAction
+import io.github.alessiocpt.powerremapper.core.KeyGesture
 import io.github.alessiocpt.powerremapper.settings.Fallback
+import io.github.alessiocpt.powerremapper.settings.GestureSlot
 import io.github.alessiocpt.powerremapper.settings.Profile
 import io.github.alessiocpt.powerremapper.settings.SettingsRepository
 import io.github.alessiocpt.powerremapper.ui.AppLabelResolver
 import io.github.alessiocpt.powerremapper.ui.InstalledApps
 import io.github.alessiocpt.powerremapper.ui.LaunchableApp
+import io.github.alessiocpt.powerremapper.ui.rememberShizukuReady
 import io.github.alessiocpt.powerremapper.ui.components.NothingButton
 import io.github.alessiocpt.powerremapper.ui.components.NothingCard
 import io.github.alessiocpt.powerremapper.ui.components.NothingSectionLabel
@@ -161,6 +165,11 @@ fun ProfilesScreen(
 private fun AppProfileRow(profile: Profile, onClick: () -> Unit, onDelete: () -> Unit) {
     val context = LocalContext.current
     val installed = remember(profile.packageName) { isInstalled(context, profile.packageName) }
+    val needsShizuku = KeyGesture.entries.any { gesture ->
+        profile.slotFor(gesture) == GestureSlot.Assigned(KeyAction.CameraShutter)
+    }
+    val shizukuReady = rememberShizukuReady()
+    val shizukuMissing = needsShizuku && !shizukuReady
     val fallback = stringResource(
         when (profile.fallback) {
             Fallback.INHERIT -> R.string.profiles_fallback_inherit
@@ -170,11 +179,10 @@ private fun AppProfileRow(profile: Profile, onClick: () -> Unit, onDelete: () ->
     Row(verticalAlignment = Alignment.CenterVertically) {
         ProfileRow(
             title = AppLabelResolver.labelFor(context, profile.packageName),
-            caption = if (installed) {
-                fallback
-            } else {
-                stringResource(R.string.profiles_not_installed, fallback)
-            },
+            caption = listOfNotNull(
+                if (installed) fallback else stringResource(R.string.profiles_not_installed, fallback),
+                if (shizukuMissing) stringResource(R.string.shizuku_not_ready_hint) else null
+            ).joinToString(" · "),
             onClick = onClick,
             modifier = Modifier.weight(1f)
         )

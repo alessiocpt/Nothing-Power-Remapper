@@ -49,6 +49,8 @@ import io.github.alessiocpt.powerremapper.ui.CameraApps
 import io.github.alessiocpt.powerremapper.ui.LaunchableApp
 import io.github.alessiocpt.powerremapper.ui.InstalledApps
 import io.github.alessiocpt.powerremapper.ui.UiLabels
+import io.github.alessiocpt.powerremapper.unlock.ShizukuShell
+import io.github.alessiocpt.powerremapper.unlock.ShizukuStatus
 import io.github.alessiocpt.powerremapper.ui.components.NothingCard
 import io.github.alessiocpt.powerremapper.ui.components.NothingSectionLabel
 import io.github.alessiocpt.powerremapper.ui.screenContentPadding
@@ -111,7 +113,17 @@ fun ActionPickerScreen(
         }
     }
 
-    fun save(action: KeyAction) = saveSlot(GestureSlot.Assigned(action))
+    fun save(action: KeyAction) {
+        // Ask for Shizuku the moment Camera Shutter is chosen, not at startup, so a setup without
+        // it never sees the prompt. Saved either way: Shizuku may be started later.
+        if (action == KeyAction.CameraShutter) {
+            val shizuku = ShizukuShell(context)
+            if (shizuku.status() == ShizukuStatus.PERMISSION_REQUIRED) {
+                shizuku.requestPermission()
+            }
+        }
+        saveSlot(GestureSlot.Assigned(action))
+    }
 
     // Glyph Matrix hardware is a fixed fact of the running device, not something that changes
     // mid-session, so this is cheap to call directly rather than caching it in remember/state.
@@ -184,7 +196,19 @@ fun ActionPickerScreen(
                 BuiltInActionsCard(
                     actions = matchingActions,
                     unavailableActions = unavailableActions,
-                    hints = assistantHint?.let { mapOf<KeyAction, String>(KeyAction.LaunchAssistant to it) }.orEmpty(),
+                    hints = buildMap {
+                        assistantHint?.let { put(KeyAction.LaunchAssistant, it) }
+                        put(
+                            KeyAction.CameraShutter,
+                            stringResource(
+                                if (gesture == KeyGesture.SINGLE_PRESS) {
+                                    R.string.picker_camera_shutter_single_press
+                                } else {
+                                    R.string.picker_camera_shutter
+                                }
+                            )
+                        )
+                    },
                     onSelect = ::save
                 )
                 Spacer(modifier = Modifier.height(SECTION_GAP))

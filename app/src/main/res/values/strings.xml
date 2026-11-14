@@ -150,6 +150,9 @@
     <string name="action_launch_camera_video">Camera: video</string>
     <string name="error_camera_unavailable">No camera app could be opened.</string>
     <string name="action_camera_shutter">Camera shutter</string>
+    <string name="picker_camera_shutter">Presses the camera app\'s shutter. Needs Shizuku running and allowed.</string>
+    <string name="picker_camera_shutter_single_press">Presses the camera app\'s shutter. Needs Shizuku, and the unlock wizard to free single press.</string>
+    <string name="shizuku_not_ready_hint">Shizuku not running: Camera shutter won\'t work</string>
     <string name="error_shizuku_not_running">Camera shutter needs Shizuku running and allowed for this app.</string>
     <string name="action_toggle_notifications">Toggle notifications</string>
     <string name="action_toggle_quick_settings">Toggle Quick Settings</string>
