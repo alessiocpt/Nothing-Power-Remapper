@@ -178,13 +178,13 @@ key-test rebuild does. On the lock screen it uses the Default Profile. Haptic ga
 gestures, no feedback") uses the active Profile's gestures.
 
 **Acceptance criteria:**
-- [ ] With a Profile for app X that sets single press and is Isolated, double press does nothing in X and runs the Default action elsewhere.
+- [x] With a Profile for app X that sets single press and is Isolated, double press does nothing in X and runs the Default action elsewhere.
 - [x] An app switch during a multi-tap does not reset the press in progress.
 - [x] A debug-only path seeds a test Profile, since the editor UI does not exist yet.
 
 **Verification:**
 - [x] `./scripts/verify.sh` passes
-- [ ] Manual check: the scenario above on the phone
+- [x] Manual check: the scenario above on the phone
 
 **Dependencies:** Tasks 4, 6
 
@@ -193,8 +193,8 @@ gestures, no feedback") uses the active Profile's gestures.
 **Estimated scope:** Small–Medium
 
 ### Checkpoint B: after Tasks 4–7
-- [ ] All tests pass; a seeded Profile changes behaviour only inside its app
-- [ ] Review with the human before building UI
+- [x] All tests pass; a seeded Profile changes behaviour only inside its app
+- [x] Review with the human before building UI
 
 ---
 
