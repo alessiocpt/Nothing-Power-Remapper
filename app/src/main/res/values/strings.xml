@@ -25,6 +25,13 @@
     <string name="profiles_fallback_inherit">Inherit: unassigned gestures use the Default profile</string>
     <string name="profiles_fallback_isolated">Isolated: unassigned gestures do nothing</string>
     <string name="profiles_not_installed">Not installed · %1$s</string>
+    <string name="profile_editor_fallback">Fallback</string>
+    <string name="profile_editor_isolated_title">Isolated</string>
+    <string name="profile_editor_gestures">Gestures</string>
+    <string name="profile_editor_unassigned_default">%1$s (from Default)</string>
+    <string name="profile_editor_unassigned_nothing">Does nothing (Isolated)</string>
+    <string name="picker_profile_subtitle">%1$s in %2$s</string>
+    <string name="picker_unassigned">Unassigned: follow the profile\'s fallback</string>
     <string name="profiles_delete">Delete</string>
     <string name="profiles_delete_title">Delete the %1$s profile?</string>
     <string name="profiles_delete_body">The app goes back to using the Default profile.</string>
@@ -115,10 +122,6 @@
     <string name="test_section_gestures">Gestures</string>
     <string name="test_empty">No events yet — press your Essential Key.</string>
     <string name="test_edit_mapping">Edit action mapping</string>
-    <string name="diagnostics_test_profile_title">Test profile (debug build)</string>
-    <string name="diagnostics_test_profile_body">An Isolated profile for Nothing Camera: long press takes a screenshot, every other gesture does nothing. Outside the camera, your normal mappings apply.</string>
-    <string name="diagnostics_test_profile_add">Add test profile</string>
-    <string name="diagnostics_test_profile_remove">Remove test profile</string>
     <string name="test_section_foreground_app">Recent foreground apps</string>
     <string name="test_foreground_app_caption">Newest first. Coming back here through the home screen adds your launcher at the top.</string>
     <string name="test_foreground_app_none">None yet. Open another app, then come back here.</string>

@@ -41,7 +41,9 @@ import io.github.alessiocpt.powerremapper.R
 import io.github.alessiocpt.powerremapper.actions.KeyAction
 import io.github.alessiocpt.powerremapper.core.KeyGesture
 import io.github.alessiocpt.powerremapper.glyph.GlyphDevice
+import io.github.alessiocpt.powerremapper.settings.GestureSlot
 import io.github.alessiocpt.powerremapper.settings.SettingsRepository
+import io.github.alessiocpt.powerremapper.ui.AppLabelResolver
 import io.github.alessiocpt.powerremapper.ui.LaunchableApp
 import io.github.alessiocpt.powerremapper.ui.InstalledApps
 import io.github.alessiocpt.powerremapper.ui.UiLabels
@@ -67,11 +69,15 @@ private val ICON_TO_LABEL_GAP = 16.dp
  * then every launchable app. The whole screen is one scrolling [LazyColumn] so the full app list
  * renders inline with the page scroll (no nested scroll region). Selecting a row saves the mapping
  * and returns via [onActionSaved].
+ *
+ * With a [profilePackage] it edits that app Profile's slot instead of the Default Profile, and
+ * offers "Unassigned" first so the gesture can go back to following the Profile's Fallback.
  */
 @Composable
 fun ActionPickerScreen(
     gesture: KeyGesture,
     onActionSaved: () -> Unit,
+    profilePackage: String? = null,
     systemBarsPadding: PaddingValues = PaddingValues(),
     modifier: Modifier = Modifier
 ) {
@@ -90,12 +96,20 @@ fun ActionPickerScreen(
         appsLoaded = true
     }
 
-    fun save(action: KeyAction) {
+    fun saveSlot(slot: GestureSlot) {
         coroutineScope.launch {
-            repository.setActionFor(gesture, action)
+            if (profilePackage == null) {
+                // The Default Profile has no Unassigned state: it is what Unassigned falls back to.
+                val action = (slot as? GestureSlot.Assigned)?.action ?: KeyAction.DoNothing
+                repository.setActionFor(gesture, action)
+            } else {
+                repository.setProfileSlot(profilePackage, gesture, slot)
+            }
             onActionSaved()
         }
     }
+
+    fun save(action: KeyAction) = saveSlot(GestureSlot.Assigned(action))
 
     // Glyph Matrix hardware is a fixed fact of the running device, not something that changes
     // mid-session, so this is cheap to call directly rather than caching it in remember/state.
@@ -119,13 +133,33 @@ fun ActionPickerScreen(
             )
             Spacer(modifier = Modifier.height(LABEL_GAP))
             Text(
-                text = stringResource(UiLabels.gestureLabelRes(gesture)),
+                text = if (profilePackage == null) {
+                    stringResource(UiLabels.gestureLabelRes(gesture))
+                } else {
+                    stringResource(
+                        R.string.picker_profile_subtitle,
+                        stringResource(UiLabels.gestureLabelRes(gesture)),
+                        AppLabelResolver.labelFor(context, profilePackage)
+                    )
+                },
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(TITLE_TO_CONTENT_GAP))
             SearchField(query = query, onQueryChange = { query = it })
             Spacer(modifier = Modifier.height(CARD_GAP))
+        }
+
+        if (profilePackage != null && query.isBlank()) {
+            item {
+                NothingCard(modifier = Modifier.fillMaxWidth()) {
+                    ActionTextRow(
+                        label = stringResource(R.string.picker_unassigned),
+                        onClick = { saveSlot(GestureSlot.Unassigned) }
+                    )
+                }
+                Spacer(modifier = Modifier.height(CARD_GAP))
+            }
         }
 
         if (matchingActions.isNotEmpty()) {

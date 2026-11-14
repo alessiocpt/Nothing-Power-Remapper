@@ -44,6 +44,7 @@ import io.github.alessiocpt.powerremapper.ui.screens.HapticPatternScreen
 import io.github.alessiocpt.powerremapper.ui.screens.HomeScreen
 import io.github.alessiocpt.powerremapper.ui.screens.KeySetupScreen
 import io.github.alessiocpt.powerremapper.ui.screens.ProfileAppPickerScreen
+import io.github.alessiocpt.powerremapper.ui.screens.ProfileEditorScreen
 import io.github.alessiocpt.powerremapper.ui.screens.ProfilesScreen
 import io.github.alessiocpt.powerremapper.ui.screens.KeyTestScreen
 import io.github.alessiocpt.powerremapper.ui.screens.OnboardingScreen
@@ -69,7 +70,8 @@ private enum class Screen(val tab: NavBarItem? = null) {
     UNLOCK_WIZARD,
     HAPTIC_PATTERN,
     ACTION_PICKER,
-    PROFILE_APP_PICKER
+    PROFILE_APP_PICKER,
+    PROFILE_EDITOR
 }
 
 private val TAB_SCREENS = Screen.entries.filter { it.tab != null }
@@ -127,6 +129,8 @@ private fun AppNavigation() {
     var showOnboarding by rememberSaveable { mutableStateOf(!onboardingState.completed) }
     val backStack = remember { mutableStateListOf(Screen.HOME) }
     var gestureBeingEdited by remember { mutableStateOf(KeyGesture.SINGLE_PRESS) }
+    // The app Profile the editor and its action picker work on; null means the Default Profile.
+    var profileBeingEdited by remember { mutableStateOf<String?>(null) }
     val current = backStack.last()
     // The tab a page was opened from stays selected while the bar slides away and back.
     val selectedTab = backStack.last { screen -> screen.tab != null }
@@ -167,8 +171,14 @@ private fun AppNavigation() {
     }
 
     fun editGesture(gesture: KeyGesture) {
+        profileBeingEdited = null
         gestureBeingEdited = gesture
         navigateTo(Screen.ACTION_PICKER)
+    }
+
+    fun editProfile(packageName: String) {
+        profileBeingEdited = packageName
+        navigateTo(Screen.PROFILE_EDITOR)
     }
 
     Scaffold(
@@ -232,14 +242,25 @@ private fun AppNavigation() {
 
                     Screen.PROFILES -> ProfilesScreen(
                         onEditDefaultProfile = { selectTab(Screen.HOME) },
-                        // The Profile editor arrives in Task 9.
-                        onEditProfile = {},
+                        onEditProfile = ::editProfile,
                         onAddProfile = { navigateTo(Screen.PROFILE_APP_PICKER) },
                         systemBarsPadding = systemBarsPadding
                     )
 
                     Screen.PROFILE_APP_PICKER -> ProfileAppPickerScreen(
-                        onProfileCreated = { navigateBack() },
+                        onProfileCreated = { packageName ->
+                            navigateBack()
+                            editProfile(packageName)
+                        },
+                        systemBarsPadding = systemBarsPadding
+                    )
+
+                    Screen.PROFILE_EDITOR -> ProfileEditorScreen(
+                        packageName = checkNotNull(profileBeingEdited),
+                        onEditGesture = { gesture ->
+                            gestureBeingEdited = gesture
+                            navigateTo(Screen.ACTION_PICKER)
+                        },
                         systemBarsPadding = systemBarsPadding
                     )
 
@@ -266,6 +287,7 @@ private fun AppNavigation() {
                     Screen.ACTION_PICKER -> ActionPickerScreen(
                         gesture = gestureBeingEdited,
                         onActionSaved = { navigateBack() },
+                        profilePackage = profileBeingEdited,
                         systemBarsPadding = systemBarsPadding
                     )
                 }
