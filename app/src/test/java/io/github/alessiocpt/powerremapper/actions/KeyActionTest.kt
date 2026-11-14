@@ -11,14 +11,21 @@ class KeyActionTest {
     @Test
     fun systemNavigationActionsRoundTrip() {
         for (action in listOf(
+            KeyAction.ToggleNotifications,
+            KeyAction.ToggleQuickSettings,
             KeyAction.GoHome,
             KeyAction.GoBack,
             KeyAction.ShowRecents,
-            KeyAction.ShowPowerMenu,
-            KeyAction.ToggleSplitScreen
+            KeyAction.ShowPowerMenu
         )) {
             assertEquals(action, roundTrip(action))
         }
+    }
+
+    @Test
+    fun aRemovedActionReadsBackAsDoNothing() {
+        // Split screen was offered briefly; Nothing OS does not support it as a system action.
+        assertEquals(KeyAction.DoNothing, KeyAction.fromPersisted("toggle_split_screen", null))
     }
 
     @Test

@@ -278,17 +278,17 @@ only, never screen content, never stored or sent) in order to pick a Profile.
 
 ## Task 11: Port the system actions
 
-**Description:** Add `Home`, `Back`, `Recents`, `PowerMenu` and `SplitScreen` (accessibility
-global actions), and `AdjustVolume(direction)`, which raises or lowers the volume with the system
+**Description:** Add `Home`, `Back`, `Recents` and `PowerMenu` (accessibility global actions;
+`SplitScreen` was dropped: Nothing OS does not support it as a system action), and `AdjustVolume(direction)`, which raises or lowers the volume with the system
 volume panel shown. Each one needs its id, persistence, picker entry, label and executor branch.
 
 **Acceptance criteria:**
-- [ ] Each action works on the phone from any Gesture.
+- [x] Each action works on the phone from any Gesture.
 - [x] `AdjustVolume` persists its direction as the payload, and the round trip is tested.
 
 **Verification:**
 - [x] `./gradlew testDebugUnitTest --tests '*KeyAction*' --tests '*ProfileSerialization*'`, then `./scripts/verify.sh`
-- [ ] Manual check on the phone
+- [x] Manual check on the phone
 
 **Dependencies:** Checkpoint C (independent of Tasks 12–15)
 

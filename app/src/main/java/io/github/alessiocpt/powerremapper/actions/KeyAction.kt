@@ -103,10 +103,19 @@ sealed interface KeyAction {
         const val ID: String = "show_power_menu"
     }
 
-    /** Enters or leaves split screen via the accessibility global action. */
-    data object ToggleSplitScreen : KeyAction {
+    /**
+     * Opens the notification shade, or closes it if it is already open in any state, including
+     * when Quick Settings is showing.
+     */
+    data object ToggleNotifications : KeyAction {
         override val id: String = ID
-        const val ID: String = "toggle_split_screen"
+        const val ID: String = "toggle_notifications"
+    }
+
+    /** Opens the fully expanded Quick Settings, or closes the shade if it is open in any state. */
+    data object ToggleQuickSettings : KeyAction {
+        override val id: String = ID
+        const val ID: String = "toggle_quick_settings"
     }
 
     /**
@@ -138,10 +147,11 @@ sealed interface KeyAction {
             RingerCycle.ID -> RingerCycle
             ToggleGlyphLight.ID -> ToggleGlyphLight
             GoHome.ID -> GoHome
+            ToggleNotifications.ID -> ToggleNotifications
+            ToggleQuickSettings.ID -> ToggleQuickSettings
             GoBack.ID -> GoBack
             ShowRecents.ID -> ShowRecents
             ShowPowerMenu.ID -> ShowPowerMenu
-            ToggleSplitScreen.ID -> ToggleSplitScreen
             AdjustVolume.ID -> VolumeDirection.fromPersisted(payload)?.let(::AdjustVolume) ?: DoNothing
             else -> DoNothing
         }

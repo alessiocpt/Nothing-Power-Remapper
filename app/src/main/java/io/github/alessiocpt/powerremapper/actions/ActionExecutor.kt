@@ -1,6 +1,7 @@
 package io.github.alessiocpt.powerremapper.actions
 
 import android.accessibilityservice.AccessibilityService
+import android.app.KeyguardManager
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
@@ -10,6 +11,8 @@ import android.hardware.camera2.CameraManager
 import android.media.AudioManager
 import android.util.Log
 import android.view.KeyEvent
+import android.view.WindowManager
+import android.view.accessibility.AccessibilityWindowInfo
 import android.widget.Toast
 import io.github.alessiocpt.powerremapper.R
 import io.github.alessiocpt.powerremapper.glyph.GlyphDevice
@@ -41,6 +44,10 @@ class ActionExecutor(
     private val glyphLight: GlyphLight? by lazy {
         GlyphDevice.current()?.let { MatrixGlyphLight(it.sdkDeviceId) }
     }
+    // On the lock screen the shade's window fills the screen even when closed, so the window list
+    // cannot tell open from closed there; the last toggle issued while locked stands in for it.
+    private var shadeOpenedWhileLocked = false
+
     private var glyphLightBound = false
     private var glyphLightOn = false
 
@@ -63,6 +70,10 @@ class ActionExecutor(
             is KeyAction.MediaPrevious -> dispatchMediaKey(KeyEvent.KEYCODE_MEDIA_PREVIOUS)
             is KeyAction.RingerCycle -> cycleRingerMode()
             is KeyAction.ToggleGlyphLight -> toggleGlyphLight()
+            is KeyAction.ToggleNotifications ->
+                toggleShade(AccessibilityService.GLOBAL_ACTION_NOTIFICATIONS)
+            is KeyAction.ToggleQuickSettings ->
+                toggleShade(AccessibilityService.GLOBAL_ACTION_QUICK_SETTINGS)
             is KeyAction.GoHome -> performGlobalAction(
                 AccessibilityService.GLOBAL_ACTION_HOME,
                 R.string.error_system_action_failed
@@ -77,10 +88,6 @@ class ActionExecutor(
             )
             is KeyAction.ShowPowerMenu -> performGlobalAction(
                 AccessibilityService.GLOBAL_ACTION_POWER_DIALOG,
-                R.string.error_system_action_failed
-            )
-            is KeyAction.ToggleSplitScreen -> performGlobalAction(
-                AccessibilityService.GLOBAL_ACTION_TOGGLE_SPLIT_SCREEN,
                 R.string.error_system_action_failed
             )
             is KeyAction.AdjustVolume -> adjustVolume(action.direction)
@@ -196,6 +203,39 @@ class ActionExecutor(
         }
         audioManager.dispatchMediaKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, keyCode))
         audioManager.dispatchMediaKeyEvent(KeyEvent(KeyEvent.ACTION_UP, keyCode))
+    }
+
+    /**
+     * Closes the shade if it is open in any state, otherwise opens it with [openAction]: both
+     * toggles close a shade the other opened, or one pulled down by hand.
+     */
+    private fun toggleShade(openAction: Int) {
+        val service = accessibilityService
+        if (service == null) {
+            toast(R.string.error_system_action_failed)
+            return
+        }
+        val locked = context.getSystemService(KeyguardManager::class.java)?.isKeyguardLocked == true
+        val open = if (locked) shadeOpenedWhileLocked else isShadeOpen(service)
+        if (open) {
+            performGlobalAction(
+                AccessibilityService.GLOBAL_ACTION_DISMISS_NOTIFICATION_SHADE,
+                R.string.error_system_action_failed
+            )
+        } else {
+            performGlobalAction(openAction, R.string.error_system_action_failed)
+        }
+        shadeOpenedWhileLocked = locked && !open
+    }
+
+    private fun isShadeOpen(service: AccessibilityService): Boolean {
+        val screenHeight = service.getSystemService(WindowManager::class.java)
+            ?.currentWindowMetrics?.bounds?.height() ?: return false
+        val windows = service.windows.map { window ->
+            val bounds = android.graphics.Rect().also(window::getBoundsInScreen)
+            WindowSnapshot(type = window.type, heightPx = bounds.height())
+        }
+        return ShadeState.isShadeOpen(windows, screenHeight, AccessibilityWindowInfo.TYPE_SYSTEM)
     }
 
     /**
