@@ -52,7 +52,9 @@ Requirements: Android 15 or newer, and a Nothing phone with an Essential Key. Th
 - The app processes hardware-key events on the device. It never stores, uploads or shares them.
 - It saves only the Essential Key identifier, on the device.
 - To pick an app's profile, it reads which app is in front (package name only), kept in memory only.
-- It does not read screen content, text fields or anything you type.
+- For the shade toggles it reads the size and type of on-screen windows. Android grants this only
+  with window-content access, so it shows a "can view your screen" warning, but the app never reads
+  what windows show, text fields or anything you type.
 - There are no accounts, analytics, ads or tracking.
 
 Read the full [Privacy Policy](PRIVACY.md).

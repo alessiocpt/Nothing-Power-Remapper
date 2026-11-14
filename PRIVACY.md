@@ -64,7 +64,8 @@ mapping you set; it does not choose or plan actions. If you assign Screenshot or
 service invokes the corresponding Android accessibility system action only after it recognises that
 assigned gesture. The service:
 
-- does not read screen content or typed text;
+- does not read what is shown on screen or typed text, although Android grants it the ability to (see
+  "Window sizes for the shade toggles" below);
 - reads only the package and window class name of the app in front, to pick that app's profile (see
   below);
 - does not keep a history or log of hardware key events;
@@ -79,6 +80,16 @@ class name, which it uses to tell an app's own screen from a dialog, the notific
 keyboard. It never reads what the window shows. The current app, and on the Key Test screen the last
 five, are kept in memory only while the service runs. They are not written to storage, not included
 in crash reports, and never transmitted.
+
+### Window sizes for the shade toggles
+
+Toggle Notifications and Toggle Quick Settings must know whether the notification shade is already
+open. The service learns this from the list of windows on screen, reading only each window's type
+and size: a system window covering a large part of the screen is the open shade. It never reads a
+window's text, images or other content. Android grants the window list only to services that may
+also retrieve window content, so the app requests that capability, and Android's settings warn that
+the service can view your screen. The window list is read only when you press a shade toggle, is
+used on the spot, and is neither stored nor transmitted.
 
 If you turn on **Run actions only when unlocked**, the service also asks Android whether the lock
 screen is showing when a press or gesture would otherwise do something. The answer is used on the
