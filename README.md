@@ -44,7 +44,10 @@ stay disabled if you uninstall this app, so re-enable them from the wizard first
 
 ## Install
 
-Download the signed APK from the
+<a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/alessiocpt/Nothing-Power-Remapper"><img alt="Get it on Obtainium" src="https://raw.githubusercontent.com/ImranR98/Obtainium/main/assets/graphics/badge_obtainium.png" height="60"></a>
+
+[Obtainium](https://github.com/ImranR98/Obtainium) installs the app from this repository's GitHub
+releases and keeps it updated. Or download the signed APK from the
 [latest release](https://github.com/alessiocpt/Nothing-Power-Remapper/releases/latest). It installs
 next to EssentialKeyTools, under its own application ID.
 
