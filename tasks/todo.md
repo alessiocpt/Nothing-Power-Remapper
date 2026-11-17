@@ -417,7 +417,7 @@ description mentions that single press needs the unlock wizard.
 - [x] `./scripts/verify.sh` passes
 - [x] Every Action verified on the phone
 - [x] README lists the features
-- [ ] Merge to `main` and tag a first GitHub release
+- [x] Merge to `main` and tag a first GitHub release (v1.0.0, signed in CI; release APK checked on the phone)
 
 ---
 
